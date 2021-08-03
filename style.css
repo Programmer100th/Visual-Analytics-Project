@@ -1,0 +1,135 @@
+body {
+  
+}
+
+
+.flex-container {
+    
+    display: flex;
+    flex-direction: column;
+}
+
+
+.container {
+    display: flex;
+    
+}
+
+.flex_item_primary {
+    flex-grow: 2;
+}
+
+.flex_item_secondary {
+    flex-grow: 1;
+}
+
+
+.map
+{
+    background:lightblue
+}
+
+.country 
+{
+   
+    stroke:black;
+    stroke-width: 0.1px;
+
+}
+
+.country:hover {
+    fill:red
+}
+
+
+
+.province
+{
+    fill: antiquewhite;
+    stroke:black;
+    stroke-width: 0.1px;
+}
+
+.province:hover {
+    fill:red
+}
+
+
+
+.green
+{
+    fill:#00ff00;
+    stroke:#000000;
+    stroke-width: 0.3;
+
+}
+
+.active {
+    fill: #98f5ff;
+}
+
+
+
+.barchartRects {
+    fill:steelblue;
+}
+
+
+.clicked_rect {
+    fill: red;
+}
+
+text {
+    font-size: 1.2em;
+
+}
+
+
+
+.myLabel {
+    font-size: 0.7em;
+}
+
+
+.block {
+    display: block;
+ }
+
+
+
+.scatterplotCircle {
+    fill:steelblue;
+    opacity:0.5;
+}
+
+.worldMapCircle {
+
+}
+
+
+.tick {
+    cursor: pointer;
+}
+
+
+.tick text {
+    font-size: 1.0em;
+    fill: black;
+    font-family: sans-serif;;
+}
+
+.tick circle {
+    stroke: black;
+    stroke-opacity: 0.5;
+}
+
+
+.circleSite{
+    
+}
+
+
+svg
+{
+    outline: 1px solid black;
+}
