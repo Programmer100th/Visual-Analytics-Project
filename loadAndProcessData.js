@@ -76,19 +76,11 @@ export const loadAndProcessData = (jsonFile) =>
 
         });
 
-        
-
-
-        /*
-        const rowById = csvData.reduce((accumulator, d) => {
-            accumulator[d.udnp_code] = d;
-            return accumulator;
-        }, {});
-        */
-
+        var arrayOfCountries = sitesPerCountryArray.map(x => x[0]);
+        console.log(arrayOfCountries);
 
         console.log("COUNTRIES", countries);
-        //console.log("SitesPerCountryArray", sitesPerCountryArray);
+        console.log("SitesPerCountryArray", sitesPerCountryArray);
 
         
 

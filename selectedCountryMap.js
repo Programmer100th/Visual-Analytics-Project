@@ -51,6 +51,9 @@ function putCountryOnMap(selected_country, sites_number, country_iso_code)
 {
     //UPDATE PATTERN FOR INTERACTING E FILTERING THE LEGEND
 
+   
+
+
 
     d3.select("#mapSingleCountry").selectAll("*").remove();
 
@@ -83,7 +86,7 @@ function putCountryOnMap(selected_country, sites_number, country_iso_code)
 
 
     const zoom = d3.zoom()
-        .scaleExtent([0.2, 100])
+        .scaleExtent([0.2, 200])
         .on('zoom', (event) => {
             g.attr('transform', event.transform)
             d3.select('#mapSingleCountry').selectAll(".newCircle")
@@ -186,7 +189,8 @@ function putCountryOnMap(selected_country, sites_number, country_iso_code)
             country_iso_code, 
             projection, 
             categoryScale,
-            selectedColorValue })
+            selectedColorValue,
+            zoom })
 
     }
 

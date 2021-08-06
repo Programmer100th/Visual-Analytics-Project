@@ -4,7 +4,8 @@ export const sitesOnSingleCountry = (selection, props) => {
         country_iso_code, 
         projection, 
         categoryScale,
-        selectedColorValue} = props;
+        selectedColorValue,
+        zoom} = props;
 
 
 
@@ -21,7 +22,7 @@ export const sitesOnSingleCountry = (selection, props) => {
         .append("circle")
         .filter(function (d) {
             //Filter based on relevance and category
-            return d.country_iso == country_iso_code //&& d.relevance > 400
+            return d.country_iso == country_iso_code && d.relevance >= 50
         })
         .attr("cx", function (d) {
             return projection([d.longitude, d.latitude])[0];
@@ -29,12 +30,14 @@ export const sitesOnSingleCountry = (selection, props) => {
         .attr("cy", function (d) {
             return projection([d["longitude"], d["latitude"]])[1];
         })
-        .attr("r", 0.3)
+        .attr("r", 2)
 
         .attr('class', 'newCircle')
 
         .attr("stroke", "black")
         .attr("stroke-width", "0.5px")
+
+      
         .attr("fill", function (d) {
             return categoryScale(d.category)
             
@@ -46,6 +49,9 @@ export const sitesOnSingleCountry = (selection, props) => {
 
        
        
+
+    
+
 
         
 
@@ -83,46 +89,34 @@ export const sitesOnSingleCountry = (selection, props) => {
 
 function mouseOver() {
 
-    console.log("APP")
+    console.log("Hover")
 
     d3.select(this)
 
     .append("g:title")
     .attr('x', 100)
     .attr('y', 100)
-	.text(function(d) { return d.name + ", " + d.relevance });
+	.text(function(d) { return d.name + ", " + d.relevance })
 
-    /*
+    .transition()
+    .duration(1000)
+    .attr('r', 3)
+    //.attr('r', 0.00001 * zoom.transform.k)
     
-    d3.select(this.parentNode).append("title")//appending it to path's parent which is the g(group) DOM
     
-        .attr('x', projection([d.longitude, d.latitude])[0])
-        .attr('y', projection([d["longitude"], d["latitude"]])[1])
-
-        .attr("class", "myLabel")//adding a label class
-        .text(function () {
-            return d.name
-        });
-    */
-
-    
-
-    d3.select(this)
-        .transition()
-        .duration(1000)
-        .attr('r', 3)
         
 
 }
 
 
 function mouseOut() {
-    //d3.selectAll(".myLabel").remove()//this will remove the text on mouse out
+ 
 
     d3.select(this)
         .transition()
         .duration(1000)
         .attr('r', 1)
+        //.attr('r', 0.000001 * zoom.transform.k)
 }
 
 
@@ -132,5 +126,6 @@ function clickfn(){
         .transition()
         .duration(1000)
         .attr('r', 3)
+        
 }
 

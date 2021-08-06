@@ -5,17 +5,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>World's Monuments</title>
+    <title>Map Experiment</title>
 
     <script src="https://d3js.org/d3.v6.min.js"></script> <!-- v4 e v6 cambia come prende i dati da json-->
     <script type="text/javascript" src="https://d3js.org/topojson.v1.min.js"></script>
 
+
     <link rel="stylesheet" href="./style.css">
+    
 
 
 </head>
 
 <body>
+
+    <div class="header" id="myHeader">
+
+        <div class="headerSubMenu" id="divCountryMenu">
+          
+        </div>
+
+
+        <div class="headerSubMenu" id=divCategoryMenu>
+         
+        </div>
+
+        <div class="headerSubMenu">
+            <input type="range" min="15" max="100" value="100">
+        </div>
+
+    </div>
+
+
 
 
     <div class="flex-container">
@@ -26,6 +47,7 @@
 
 
     <script type="module" src="./index.js"></script>
+    <script type="module" src="./header.js"></script>
 
 
 

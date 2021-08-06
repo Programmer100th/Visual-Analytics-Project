@@ -2,34 +2,86 @@
 
 
 
-function myBarChart()
+function myBarChart(selectedCountry, selectedCategory)
 {
-    
-const width = window.innerWidth/2;
-const height = window.innerHeight/2;
 
-const svg = d3.select("#row2").append("svg")
+    console.log("Attuali:", selectedCountry, selectedCategory)
+
+   
+
+    //needed to replace barchart time by time
+    d3.select("#row2").selectAll("*").remove();
+    
+    const width = window.innerWidth/2;
+    const height = window.innerHeight/2;
+
+    const svg = d3.select("#row2").append("svg")
     .attr("width", width)
     .attr("height", height)
 
 
 
 
-d3.csv('./data_files/Population.csv')
+
+d3.csv("./data_files/geoviewsnew.csv")
 .then(data =>
     {
-        data.forEach(element => {
-            element.Population = +element.Population
-        });
-        visualizeData(data);
+        var newData = []
+        
+        data.filter(function(row) {
+            if(selectedCountry == null || selectedCountry == "World")
+            {
+                if(selectedCategory == "All" && row['relevance'] > 0)
+                {
+                    newData.push(row)
+
+                }
+                else if(row['relevance'] > 0 && row['category'] == selectedCategory)
+                {
+                
+                    newData.push(row)
+                    
+                }
+
+            }
+            else
+            {
+                if(row['country_iso'] == selectedCountry && row['relevance'] > 0)
+                {
+                    if(selectedCategory == "All")
+                    {
+
+                        newData.push(row)
+
+
+                    }
+                    else if (row['category'] == selectedCategory)
+                    {
+                        newData.push(row)
+                    }
+                }
+          
+         
+               
+            }
+        
+        })
+
+        //Order the sites by relevance in descending order
+        newData.sort((a,b) => b.relevance - a.relevance)
+
+        //Takes the 10 sites with highest relevance
+        newData = newData.slice(0, 10)
+        
+        visualizeData(newData);
     })
 
 
     function visualizeData(data)
     {
 
-        const xValue = d => d.Population
-        const yValue = d => d.Country
+        const xValue = d => +d.relevance
+        const yValue = d => d.name
 
         const margin = {top: 20, right: 20, bottom: 20, left: 80};
 
