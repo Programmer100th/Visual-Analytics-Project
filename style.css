@@ -1,5 +1,13 @@
-body {
+.header {
+    display: flex;
+    margin-bottom: 20px;
+   
+}
   
+
+.headerSubMenu {
+    width: 100px; 
+    float:left; 
 }
 
 
@@ -50,9 +58,11 @@ body {
     stroke-width: 0.1px;
 }
 
+/*
 .province:hover {
     fill:red
 }
+*/
 
 
 
@@ -107,6 +117,7 @@ text {
 }
 
 
+
 .tick {
     cursor: pointer;
 }
@@ -121,11 +132,6 @@ text {
 .tick circle {
     stroke: black;
     stroke-opacity: 0.5;
-}
-
-
-.circleSite{
-    
 }
 
 
