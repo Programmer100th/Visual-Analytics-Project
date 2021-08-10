@@ -6,7 +6,7 @@
   
 
 .headerSubMenu {
-    width: 100px; 
+    margin-right: 20px;
     float:left; 
 }
 
@@ -89,10 +89,13 @@
     fill: red;
 }
 
+
+/*
 text {
     font-size: 1.2em;
 
 }
+*/
 
 
 
@@ -111,11 +114,6 @@ text {
     fill:steelblue;
     opacity:0.5;
 }
-
-.worldMapCircle {
-
-}
-
 
 
 .tick {
@@ -139,3 +137,12 @@ svg
 {
     outline: 1px solid black;
 }
+
+
+/*Dropdown menu text */
+select
+{
+    font-size: 20px;
+}
+
+

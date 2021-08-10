@@ -1,5 +1,5 @@
 import { selectedCountryMap } from './selectedCountryMap.js'
-import { putCountryOnMap } from './selectedCountryMap.js'
+import {myBarChart} from './barChart.js';
 import { colorLegend } from './colorLegend.js'
 
 
@@ -15,7 +15,15 @@ d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
 */
 
 
-function worldMap() {
+function worldMap(selectedCategory, selectedRelevance) {
+
+    console.log("Attuali in World Map:", selectedCategory, selectedRelevance)
+
+    selectedRelevance = parseInt(selectedRelevance)
+
+
+    //needed to replace barchart time by time
+    d3.select("#row1").select("#worldMap").remove();
 
     var width = window.innerWidth / 2;
     var height = window.innerHeight / 2;
@@ -32,6 +40,7 @@ function worldMap() {
         .attr("width", width)
         .attr("height", height)
         .attr("class", "map flex_item_primary")
+        .attr('id', "worldMap")
 
 
 
@@ -65,6 +74,8 @@ function worldMap() {
 
     let csvData;
 
+
+
     let countries;
 
     const onClick = (event, d) => {
@@ -75,6 +86,90 @@ function worldMap() {
 
 
     const render = () => {
+
+
+
+
+        //var categoryMenu = document.getElementById("categoryMenu");
+        //var relevanceMenu = document.getElementById("relevanceMenu");
+
+        //var selectedCategory = categoryMenu.options[categoryMenu.selectedIndex].text;
+        //var selectedRelevance = relevanceMenu.options[relevanceMenu.selectedIndex].value;
+
+
+
+        var updatedCsvData = []
+
+
+
+        csvData.filter(function(row) {
+     
+            if(selectedCategory == "All")
+            {
+                if(selectedRelevance == 0)
+                {
+                    updatedCsvData.push(row)
+                }
+                else
+                {
+                    if(row['relevance'] >= selectedRelevance)
+                    {
+                        updatedCsvData.push(row)
+                    }
+                }
+            }
+            else
+            {
+                if(selectedRelevance == 0)
+                {
+                    if(row['category'] == selectedCategory)
+                    {
+                        updatedCsvData.push(row)
+                    }
+                }
+                else
+                {
+                    if(row['relevance'] >= selectedRelevance && row['category'] == selectedCategory)
+                    {
+                        updatedCsvData.push(row)
+                    }
+                }
+
+            }
+        });
+
+
+        const sitesPerCountryMap = d3.rollup(updatedCsvData, v => v.length, d => d.country_iso);
+       
+
+        //Converting map to array
+        var sitesPerCountryArray = Array.from(sitesPerCountryMap, ([name, sites_number]) => ([name, sites_number]));
+
+        console.log(sitesPerCountryArray)
+
+
+
+        countries.features.forEach(element => {
+            element.properties["sites_number"] = 0;
+            for (var i = 0; i < sitesPerCountryArray.length; i++) {
+
+                if ((sitesPerCountryArray[i][0]) == element.properties.ISO_A2) {
+                    element.properties["sites_number"] = sitesPerCountryArray[i][1]
+                }
+
+            }
+
+
+            //Put 0 if no sites are in the country
+            if (element.properties["sites_number"] == null) {
+
+                element.properties["sites_number"] = 0
+            }
+        });
+
+
+
+
 
 
         colorScale.domain([0, 100, 1000, 10000, d3.max(countries.features, d => d.properties.sites_number)])
@@ -95,7 +190,7 @@ function worldMap() {
 
 
         const categoryScale = d3.scaleOrdinal()
-            .domain(csvData.map(d => d.category))
+            .domain(updatedCsvData.map(d => d.category))
             .range(['#fc8d59', '#ffffbf', '#91cf60'])
 
 
@@ -122,33 +217,34 @@ function worldMap() {
 
             .on('click', function (event, d) {
 
-                putCountryOnMap(d.properties.NAME, d.properties.sites_number, d.properties.ISO_A2)
+                var categoryMenu = document.getElementById("categoryMenu");
+                var relevanceMenu = document.getElementById("relevanceMenu");
+
+                var currentCategory = categoryMenu.options[categoryMenu.selectedIndex].text;
+                var currentRelevance = relevanceMenu.options[relevanceMenu.selectedIndex].value;
+
+
+                //Dynamically set the value of the dropdown menu
+                var countryMenuOptions = document.getElementById('countryMenu').options;
+
+                for(var i = 0; i < countryMenuOptions.length; i++) {
+                    if(countryMenuOptions[i].value == d.properties.ISO_A2) {
+                        countryMenuOptions[i].selected = true;
+                      
+                    }
+                }
+
+                selectedCountryMap(d.properties.ISO_A2, currentCategory, currentRelevance, true)
+                myBarChart(d.properties.ISO_A2, currentCategory, currentRelevance)
             })
 
             .append('title')
             .text(d => d.properties.NAME + ',' + d.properties.sites_number)
 
 
-
-
-            /*
-            var circles = svg.selectAll("circle")
-            .data(csvData)
-            .enter()
-            .append("circle")
-            .attr("cx", function (d) {
-                return projection([d.longitude, d.latitude])[0];
-            })
-            .attr("cy", function (d) {
-                return projection([d["longitude"], d["latitude"]])[1];
-            })
-            .attr("r", 0.5)
-            .attr('class', 'worldMapCircle')
-            .attr("fill", function (d) {
-                return categoryScale(d.category)
-            });
-            */
     }
+
+
 
 
 

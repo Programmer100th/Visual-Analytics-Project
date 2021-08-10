@@ -7,8 +7,8 @@ import {myStarPlot} from './starPlot.js';
 
 
 myHeader()
-worldMap();
-myBarChart();
+worldMap("All", 0);
+myBarChart("World", "All", 0);
 //myScatterplot();
-selectedCountryMap();
+selectedCountryMap("World", "All", 0, true);
 myStarPlot();

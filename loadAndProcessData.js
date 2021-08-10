@@ -12,6 +12,15 @@ export const loadAndProcessData = (jsonFile) =>
     ]).then(([csvData, topoJSONData]) => {
 
 
+
+
+
+        
+
+
+               
+
+
         const countries = topojson.feature(topoJSONData, topoJSONData.objects.unnamed);
 
         const sitesPerCountryMap = d3.rollup(csvData, v => v.length, d => d.country_iso);
@@ -77,10 +86,9 @@ export const loadAndProcessData = (jsonFile) =>
         });
 
         var arrayOfCountries = sitesPerCountryArray.map(x => x[0]);
-        console.log(arrayOfCountries);
 
         console.log("COUNTRIES", countries);
-        console.log("SitesPerCountryArray", sitesPerCountryArray);
+        //console.log("SitesPerCountryArray", sitesPerCountryArray);
 
         
 

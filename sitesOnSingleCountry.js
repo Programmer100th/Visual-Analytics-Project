@@ -2,10 +2,15 @@ export const sitesOnSingleCountry = (selection, props) => {
     const {
         csvData, 
         country_iso_code, 
+        selectedCategory,
+        selectedRelevance,
         projection, 
         categoryScale,
         selectedColorValue,
         zoom} = props;
+
+
+    console.log("Sto in sites", selectedCategory, selectedRelevance)
 
 
 
@@ -22,7 +27,7 @@ export const sitesOnSingleCountry = (selection, props) => {
         .append("circle")
         .filter(function (d) {
             //Filter based on relevance and category
-            return d.country_iso == country_iso_code && d.relevance >= 50
+            return d.country_iso == country_iso_code && d.category == selectedCategory && d.relevance >= selectedRelevance
         })
         .attr("cx", function (d) {
             return projection([d.longitude, d.latitude])[0];

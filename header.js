@@ -1,4 +1,5 @@
-import { putCountryOnMap } from './selectedCountryMap.js'
+import {worldMap} from './worldMap.js';
+import { selectedCountryMap } from './selectedCountryMap.js'
 import {myBarChart} from './barChart.js';
 
 
@@ -15,13 +16,11 @@ function myHeader()
     {
         const sitesPerCountryMap = d3.rollup(csvData, v => v.length, (d => d.country_iso));
 
-        console.log(sitesPerCountryMap)
-
         //Converting map to array
         var sitesPerCountryArray = Array.from(sitesPerCountryMap, ([name, sites_number]) => ([name, sites_number]));
 
         var arrayOfCountries = sitesPerCountryArray.map(x => x[0]);
-        console.log(arrayOfCountries);
+
 
 
 
@@ -49,7 +48,6 @@ function myHeader()
 
         finalArrayOfCountries.sort()
 
-        console.log(finalArrayOfCountries)
 
 
 
@@ -66,17 +64,22 @@ function myHeader()
         var categoriesMap = d3.rollup(csvData, v => v.length, d => d.category);
         var categoriesArray = Array.from(categoriesMap, ([category, sites_number]) => ([category, sites_number]));
         var arrayOfCategories = categoriesArray.map(x => x[0]);
-        console.log(arrayOfCategories)
 
         createCategoryMenu(arrayOfCategories);
+
+
+
+        var relevanceArray = [0, 50, 100, 200, 500, 1000];
+        createRelevanceMenu(relevanceArray)
 
 
 
 
         var countryMenu = document.getElementById("countryMenu");
         var categoryMenu = document.getElementById("categoryMenu");
+        var relevanceMenu = document.getElementById("relevanceMenu");
 
-        activateMenuListeners(countryMenu, categoryMenu)
+        activateMenuListeners(countryMenu, categoryMenu, relevanceMenu)
 
        
 
@@ -95,7 +98,7 @@ function myHeader()
     
 
 
-    function activateMenuListeners(countryMenu, categoryMenu)
+    function activateMenuListeners(countryMenu, categoryMenu, relevanceMenu)
     {
         
         categoryMenu.addEventListener("change", function()
@@ -104,8 +107,12 @@ function myHeader()
             console.log(selectedCategory)
 
             var currentCountry = countryMenu.options[countryMenu.selectedIndex].value;
+            var currentRelevance = relevanceMenu.options[relevanceMenu.selectedIndex].value;
 
-            myBarChart(currentCountry, selectedCategory)
+
+            selectedCountryMap(currentCountry, selectedCategory, currentRelevance, false)
+            myBarChart(currentCountry, selectedCategory, currentRelevance)
+            worldMap(selectedCategory, currentRelevance)
 
         });
 
@@ -117,6 +124,7 @@ function myHeader()
             console.log(selectedCountry)
 
             var currentCategory = categoryMenu.options[categoryMenu.selectedIndex].text;
+            var currentRelevance = relevanceMenu.options[relevanceMenu.selectedIndex].value;
 
 
 
@@ -125,8 +133,25 @@ function myHeader()
 
 
             //Setta categoria country e relevance nei grafici da qui!
-            putCountryOnMap("CIAO", 4, selectedCountry)
-            myBarChart(selectedCountry, currentCategory)
+            //putCountryOnMap("CIAO", 4, selectedCountry)
+            selectedCountryMap(selectedCountry, currentCategory, currentRelevance, true)
+            myBarChart(selectedCountry, currentCategory, currentRelevance)
+
+        });
+
+
+        relevanceMenu.addEventListener("change", function()
+        {
+            var selectedRelevance = relevanceMenu.options[relevanceMenu.selectedIndex].value;
+            console.log(selectedRelevance)
+
+
+            var currentCountry = countryMenu.options[countryMenu.selectedIndex].value;
+            var currentCategory = categoryMenu.options[categoryMenu.selectedIndex].text;
+            
+            selectedCountryMap(currentCountry, currentCategory, selectedRelevance, false)
+            myBarChart(currentCountry, currentCategory, selectedRelevance)
+            worldMap(currentCategory, selectedRelevance)
 
         });
 
@@ -187,6 +212,30 @@ function myHeader()
             var option = document.createElement("option");
             option.value = array[i];
             option.text = array[i];
+            selectList.appendChild(option);
+        }
+    }
+
+
+
+
+
+    function createRelevanceMenu(relevanceArray)
+    {
+        var myParent = document.getElementById("divRelevanceMenu")
+
+       
+
+        //Create and append select list
+        var selectList = document.createElement("select");
+        selectList.id = "relevanceMenu";
+        myParent.appendChild(selectList);
+
+        //Create and append the options
+        for (var i = 0; i < relevanceArray.length; i++) {
+            var option = document.createElement("option");
+            option.value = relevanceArray[i];
+            option.text = "Min relevance: " + relevanceArray[i];
             selectList.appendChild(option);
         }
     }
