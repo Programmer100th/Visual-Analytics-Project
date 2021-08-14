@@ -1,6 +1,7 @@
 import {worldMap} from './worldMap.js';
 import { selectedCountryMap } from './selectedCountryMap.js'
 import {myBarChart} from './barChart.js';
+import { myStarPlot } from './starPlot.js';
 
 
 function myHeader()
@@ -113,6 +114,7 @@ function myHeader()
             selectedCountryMap(currentCountry, selectedCategory, currentRelevance, false)
             myBarChart(currentCountry, selectedCategory, currentRelevance)
             worldMap(selectedCategory, currentRelevance)
+            myStarPlot(currentCountry)
 
         });
 
@@ -136,6 +138,7 @@ function myHeader()
             //putCountryOnMap("CIAO", 4, selectedCountry)
             selectedCountryMap(selectedCountry, currentCategory, currentRelevance, true)
             myBarChart(selectedCountry, currentCategory, currentRelevance)
+            myStarPlot(selectedCountry)
 
         });
 
@@ -152,6 +155,7 @@ function myHeader()
             selectedCountryMap(currentCountry, currentCategory, selectedRelevance, false)
             myBarChart(currentCountry, currentCategory, selectedRelevance)
             worldMap(currentCategory, selectedRelevance)
+            myStarPlot(currentCountry)
 
         });
 

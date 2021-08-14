@@ -4,6 +4,7 @@ import { colorLegend } from './colorLegend.js'
 
 
 import { loadAndProcessData } from './loadAndProcessData.js'
+import { myStarPlot } from './starPlot.js';
 
 
 
@@ -236,6 +237,7 @@ function worldMap(selectedCategory, selectedRelevance) {
 
                 selectedCountryMap(d.properties.ISO_A2, currentCategory, currentRelevance, true)
                 myBarChart(d.properties.ISO_A2, currentCategory, currentRelevance)
+                myStarPlot(d.properties.ISO_A2)
             })
 
             .append('title')

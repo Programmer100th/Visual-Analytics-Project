@@ -2,8 +2,8 @@ var starPlot = {
   draw: function (id, d, options) {
     var cfg = {
       radius: 5, // Radius of the point of the polygon
-      w: 600, //Width of the circle
-      h: 600, //Height of the circle
+      w: 300, //Width of the circle
+      h: 300, //Height of the circle
       factor: 1, // Scale or zoom (DO NOT TOUCH)
       factorLegend: .85, // Distance of the legend
       levels: 5, //How many levels or inner polygon should there be drawn
@@ -250,87 +250,82 @@ function overallEncoding(overallValue) {
   return strokeWidth;
 }
 
-function myStarPlot() {
+function myStarPlot(selectedCountry) {
 
-  const w = window.innerWidth/2;;
-  const h = window.innerHeight/2;;
+  // Remove the previous star plot
+  d3.select("#row2").select("#starplot").remove();
 
-  var colorscale = d3.scaleOrdinal(d3.schemeCategory10);
+  const width = window.innerWidth / 2;
+  const height = window.innerHeight / 2;
+
+  const svg = d3.select("#row2").append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("class", "flex_item_secondary")
+        .attr('id', "starplot")
 
   //Legend titles
-  var LegendOptions = ['Smartphone', 'Tablet'];
+  //var LegendOptions = [];
 
-  //Data
-  var d = [
-    [
-      { axis: "Email", value: 0.59 },
-      { axis: "Social Networks", value: 0.56 },
-      { axis: "Internet Banking", value: 0.42 },
-      { axis: "News Sportsites", value: 0.34 },
-      { axis: "Search Engine", value: 0.48 },
-      { axis: "View Shopping sites", value: 0.14 },
-      { axis: "Paying Online", value: 0.11 },
-      { axis: "Buy Online", value: 0.05 },
-      { axis: "Stream Music", value: 0.07 },
-      { axis: "Online Gaming", value: 0.12 },
-      { axis: "Navigation", value: 0.27 },
-      { axis: "App connected to TV program", value: 0.03 },
-      { axis: "Offline Gaming", value: 0.12 },
-      { axis: "Photo Video", value: 0.4 },
-      { axis: "Reading", value: 0.03 },
-      { axis: "Listen Music", value: 0.22 },
-      { axis: "Watch TV", value: 0.03 },
-      { axis: "TV Movies Streaming", value: 0.03 },
-      { axis: "Listen Radio", value: 0.07 },
-      { axis: "Sending Money", value: 0.18 },
-      { axis: "Other", value: 0.07 },
-      { axis: "Use less Once week", value: 0.08 }
-    ], [
-      { axis: "Email", value: 0.48 },
-      { axis: "Social Networks", value: 0.41 },
-      { axis: "Internet Banking", value: 0.27 },
-      { axis: "News Sportsites", value: 0.28 },
-      { axis: "Search Engine", value: 0.46 },
-      { axis: "View Shopping sites", value: 0.29 },
-      { axis: "Paying Online", value: 0.11 },
-      { axis: "Buy Online", value: 0.14 },
-      { axis: "Stream Music", value: 0.05 },
-      { axis: "Online Gaming", value: 0.19 },
-      { axis: "Navigation", value: 0.14 },
-      { axis: "App connected to TV program", value: 0.06 },
-      { axis: "Offline Gaming", value: 0.24 },
-      { axis: "Photo Video", value: 0.17 },
-      { axis: "Reading", value: 0.15 },
-      { axis: "Listen Music", value: 0.12 },
-      { axis: "Watch TV", value: 0.1 },
-      { axis: "TV Movies Streaming", value: 0.14 },
-      { axis: "Listen Radio", value: 0.06 },
-      { axis: "Sending Money", value: 0.16 },
-      { axis: "Other", value: 0.07 },
-      { axis: "Use less Once week", value: 0.17 }
-    ]
-  ];
+  //Data to plot
+  var currentdata = [], finaldata = [];
 
-  //Options for the Radar chart, other than default
-  var mycfg = {
-    w: w,
-    h: h,
-    maxValue: 0.6,
-    levels: 6,
-    ExtraWidthX: 300
-  }
+  d3.csv("./data_files/geoviewsnew.csv")
+    .then(csvData => {
+      
+          //Fixed categories
+          const fCategoriesMap = d3.rollup(csvData, v => v.length, d => d.category);
+          var fCategoriesArray = Array.from(fCategoriesMap, ([category, sites_number]) => ([category, sites_number]));
+          var arrayOfFCategories = fCategoriesArray.map(x => x[0]);
+          var arrayOfFSites = fCategoriesArray.map(x => x[1]);
 
-  
-  //Call function to draw the Radar chart
-  //Will expect that data is in %'s
-  starPlot.draw("#row2", d, mycfg);
+          //Sites for the chosen country
+          var dataPerNation = csvData.filter(function(d){ return d.country_iso == selectedCountry});
 
-  console.log("OK")
+          //Polygon of the chosen country
+          const categoriesMap = d3.rollup(dataPerNation, v => v.length, d => d.category);
+          var categoriesArray = Array.from(categoriesMap, ([category, sites_number]) => ([category, sites_number]));
+          var arrayOfCategories = categoriesArray.map(x => x[0]);
+          var arrayOfSites = categoriesArray.map(x => x[1]);
+
+          for (var i in arrayOfFCategories) {
+
+            var site = selectedCountry == "World" ? parseInt(arrayOfFSites[i]) : parseInt(arrayOfSites[i])
+            if(isNaN(site)) site = 0
+
+            currentdata.push({
+              axis: arrayOfFCategories[i],
+              value: site
+            })
+          }
+
+          finaldata.push(currentdata);
+          console.log(JSON.stringify(finaldata))
+
+          var colorScale = d3.scaleLinear().domain([0, finaldata.length])
+            .range(["#FF9300", "#0049FF"]);
+
+          //Options for the star plot, other than default
+          var mycfg = {
+            w: width,
+            h: height,
+            //maxValue: 1,
+            color: colorScale,
+            //levels: 6,
+            ExtraWidthX: 300
+          }
+
+          //Call function to draw the star plot
+          //Will expect that data is in %'s
+          starPlot.draw("#row2", finaldata, mycfg);
+        
+    })
+
 
   ////////////////////////////////////////////
   /////////// Initiate legend ////////////////
   ////////////////////////////////////////////
-
+  /*
   var svg = d3.select('#body')
     .selectAll('svg')
     .append('svg')
@@ -375,7 +370,7 @@ function myStarPlot() {
     .attr("font-size", "11px")
     .attr("fill", "#737373")
     .text(function (d) { return d; })
-    ;
+    ;*/
 }
 
-export{myStarPlot}
+export { myStarPlot }

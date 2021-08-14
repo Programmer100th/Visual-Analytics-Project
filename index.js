@@ -11,4 +11,4 @@ worldMap("All", 0);
 myBarChart("World", "All", 0);
 //myScatterplot();
 selectedCountryMap("World", "All", 0, true);
-myStarPlot();
+myStarPlot("World");
