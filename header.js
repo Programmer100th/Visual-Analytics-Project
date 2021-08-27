@@ -1,18 +1,15 @@
 import {worldMap} from './worldMap.js';
-import { selectedCountryMap } from './selectedCountryMap.js'
+import { singleCountryMap } from './singleCountryMap.js'
 import {myBarChart} from './barChart.js';
 import { myStarPlot } from './starPlot.js';
+
 
 
 function myHeader()
 {
 
 
-    
-
-
-
-    d3.csv("./data_files/geoviewsnew.csv")
+    d3.tsv("./data_files/geoviewsnew.tsv")
     .then(csvData =>
     {
         const sitesPerCountryMap = d3.rollup(csvData, v => v.length, (d => d.country_iso));
@@ -21,9 +18,6 @@ function myHeader()
         var sitesPerCountryArray = Array.from(sitesPerCountryMap, ([name, sites_number]) => ([name, sites_number]));
 
         var arrayOfCountries = sitesPerCountryArray.map(x => x[0]);
-
-
-
 
         var dictOfCountries = {}
 
@@ -50,16 +44,7 @@ function myHeader()
         finalArrayOfCountries.sort()
 
 
-
-
-
-
         createCountryMenu(finalArrayOfCountries);
-
-
-     
-        
-
 
 
         var categoriesMap = d3.rollup(csvData, v => v.length, d => d.category);
@@ -82,7 +67,6 @@ function myHeader()
 
         activateMenuListeners(countryMenu, categoryMenu, relevanceMenu)
 
-       
 
     });
 
@@ -90,12 +74,6 @@ function myHeader()
 
            
         
-    
-
-
-
-
-
     
 
 
@@ -110,8 +88,7 @@ function myHeader()
             var currentCountry = countryMenu.options[countryMenu.selectedIndex].value;
             var currentRelevance = relevanceMenu.options[relevanceMenu.selectedIndex].value;
 
-
-            selectedCountryMap(currentCountry, selectedCategory, currentRelevance, false)
+            singleCountryMap(currentCountry, selectedCategory, currentRelevance, false)
             myBarChart(currentCountry, selectedCategory, currentRelevance)
             worldMap(selectedCategory, currentRelevance)
             myStarPlot(currentCountry)
@@ -128,15 +105,8 @@ function myHeader()
             var currentCategory = categoryMenu.options[categoryMenu.selectedIndex].text;
             var currentRelevance = relevanceMenu.options[relevanceMenu.selectedIndex].value;
 
-
-
-
-
-
-
-            //Setta categoria country e relevance nei grafici da qui!
-            //putCountryOnMap("CIAO", 4, selectedCountry)
-            selectedCountryMap(selectedCountry, currentCategory, currentRelevance, true)
+   
+            singleCountryMap(selectedCountry, currentCategory, currentRelevance, true)
             myBarChart(selectedCountry, currentCategory, currentRelevance)
             myStarPlot(selectedCountry)
 
@@ -152,7 +122,8 @@ function myHeader()
             var currentCountry = countryMenu.options[countryMenu.selectedIndex].value;
             var currentCategory = categoryMenu.options[categoryMenu.selectedIndex].text;
             
-            selectedCountryMap(currentCountry, currentCategory, selectedRelevance, false)
+         
+            singleCountryMap(currentCountry, currentCategory, selectedRelevance, false)
             myBarChart(currentCountry, currentCategory, selectedRelevance)
             worldMap(currentCategory, selectedRelevance)
             myStarPlot(currentCountry)
@@ -176,7 +147,6 @@ function myHeader()
         myParent.appendChild(selectList);
 
         //Create and append the options
-
         var option = document.createElement("option");
         option.value = "World";
         option.text = "World";
@@ -205,7 +175,6 @@ function myHeader()
         myParent.appendChild(selectList);
 
         //Create and append the options
-
         var option = document.createElement("option");
             option.value = "All";
             option.text = "All";
@@ -229,7 +198,6 @@ function myHeader()
         var myParent = document.getElementById("divRelevanceMenu")
 
        
-
         //Create and append select list
         var selectList = document.createElement("select");
         selectList.id = "relevanceMenu";
