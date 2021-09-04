@@ -2,6 +2,7 @@ import {worldMap} from './worldMap.js';
 import { singleCountryMap } from './singleCountryMap.js'
 import {myBarChart} from './barChart.js';
 import { myStarPlot } from './starPlot.js';
+import {myScatterplot} from './scatterplot.js';
 
 
 
@@ -51,6 +52,7 @@ function myHeader()
         var categoriesArray = Array.from(categoriesMap, ([category, sites_number]) => ([category, sites_number]));
         var arrayOfCategories = categoriesArray.map(x => x[0]);
 
+
         createCategoryMenu(arrayOfCategories);
 
 
@@ -92,6 +94,7 @@ function myHeader()
             myBarChart(currentCountry, selectedCategory, currentRelevance)
             worldMap(selectedCategory, currentRelevance)
             myStarPlot(currentCountry)
+            myScatterplot(currentCountry, selectedCategory, currentRelevance)
 
         });
 
@@ -109,6 +112,7 @@ function myHeader()
             singleCountryMap(selectedCountry, currentCategory, currentRelevance, true)
             myBarChart(selectedCountry, currentCategory, currentRelevance)
             myStarPlot(selectedCountry)
+            myScatterplot(selectedCountry, currentCategory, currentRelevance)
 
         });
 
@@ -127,6 +131,7 @@ function myHeader()
             myBarChart(currentCountry, currentCategory, selectedRelevance)
             worldMap(currentCategory, selectedRelevance)
             myStarPlot(currentCountry)
+            myScatterplot(currentCountry, currentCategory, selectedRelevance)
 
         });
 
@@ -181,11 +186,16 @@ function myHeader()
             selectList.appendChild(option);
 
 
+    
         for (var i = 0; i < array.length; i++) {
             var option = document.createElement("option");
             option.value = array[i];
             option.text = array[i];
-            selectList.appendChild(option);
+            if(array[i] != "United States")  //When the rollup is executed, it finds US as category, with no reason
+            {
+                selectList.appendChild(option);
+            }
+        
         }
     }
 

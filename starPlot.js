@@ -256,8 +256,8 @@ var starPlot = {
     // Remove the previous star plot
     d3.select("#row2").select("#starplot").remove();
   
-    const width = window.innerWidth / 2;
-    const height = window.innerHeight / 2;
+    const width = window.innerWidth / 3;
+    const height = window.innerHeight / 7 * 3;
   
     const svg = d3.select("#row2").append("svg")
           .attr("width", width)
@@ -271,7 +271,7 @@ var starPlot = {
     //Data to plot
     var currentdata = [], finaldata = [];
   
-    d3.csv("./data_files/geoviewsnew.csv")
+    d3.tsv("./data_files/geoviewsnew.tsv")
       .then(csvData => {
         
             //Fixed categories

@@ -2,6 +2,7 @@ import { singleCountryMap } from './singleCountryMap.js'
 import { myBarChart } from './barChart.js';
 import { colorLegend } from './colorLegend.js'
 import { myStarPlot } from './starPlot.js';
+import {myScatterplot} from './scatterplot.js';
 
 
 
@@ -31,6 +32,7 @@ function clickOnCountry(event, d) {
     singleCountryMap(d.properties.ISO_A2, currentCategory, currentRelevance, true)
     myBarChart(d.properties.ISO_A2, currentCategory, currentRelevance)
     myStarPlot(d.properties.ISO_A2)
+    myScatterplot(d.properties.ISO_A2, currentCategory, currentRelevance)
 
 
 }
@@ -99,7 +101,7 @@ function colorWorldMap(countries, path)
 
 function worldMapFirstTime() {
     var width = window.innerWidth / 2;
-    var height = window.innerHeight / 2;
+    var height = (window.innerHeight / 7) * 3;
 
 
     var projection = d3.geoMercator()
@@ -217,7 +219,7 @@ function worldMap(selectedCategory, selectedRelevance) {
 
 
     var width = window.innerWidth / 2;
-    var height = window.innerHeight / 2;
+    var height = window.innerHeight / 7 * 3;
 
 
     var projection = d3.geoMercator()

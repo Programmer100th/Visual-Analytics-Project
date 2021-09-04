@@ -1,9 +1,9 @@
 import { colorLegend } from './colorLegend.js'
+import { coordinateViewSingleCountry } from './barChart.js'
 
 
 let map;
 let geocoder;
-
 
 
 
@@ -76,7 +76,9 @@ function singleCountryMap(country_iso_code, selectedCategory, selectedRelevance,
 
         d3.tsv("./data_files/geoviewsnew.tsv")
             .then(data => {
+
                 var newData = []
+   
 
                 data.filter(function (row) {
 
@@ -133,7 +135,7 @@ function singleCountryMap(country_iso_code, selectedCategory, selectedRelevance,
                 var singleCountryMapSvg = document.getElementById('mapSingleCountry')
 
                 var dots = d3.select(singleCountryMapSvg)
-                    .selectAll("circle")
+                    .selectAll(".sitesSingleCountry")
                     .data(newData)
                     .enter()
                     .append("circle")
@@ -230,12 +232,17 @@ function singleCountryMap(country_iso_code, selectedCategory, selectedRelevance,
 
         /*
 
+        
+
      
         .transition()
         .duration(1000)
         .attr('r', 10)
  
         */
+
+
+        coordinateViewSingleCountry(d);
 
     }
 
@@ -265,5 +272,34 @@ function singleCountryMap(country_iso_code, selectedCategory, selectedRelevance,
 }
 
 
+
+
+function coordinateWithBarchart(point)
+{
+    console.log("Sto in single country e viene da barchart")
+    console.log(point)
+    console.log(point.name)
+    var singleCountryMapSvg = document.getElementById('mapSingleCountry')
+    var myDot = d3.select(singleCountryMapSvg)
+    .selectAll(".sitesSingleCountry")
+    .filter(function(d) { 
+        return d.name == point.name
+    })
+
+
+    .attr('stroke-width', 10)
+ 
+    .transition()
+        .duration(1000)
+        .attr('r', 20)
+
+        .transition()
+        .duration(1000)
+        .attr('r', 5)
+                 
+}
+
+
 export { singleCountryMap };
 export { singleCountryMapFirstTime }
+export { coordinateWithBarchart }
