@@ -1,3 +1,9 @@
+import { fromScatterplotToSingleCountryHoverIn } from './singleCountryMap.js'
+import { fromScatterplotToSingleCountryHoverOut } from './singleCountryMap.js'
+import { fromScatterplotToBarchartHoverIn } from './barChart.js'
+import { fromScatterplotToBarchartHoverOut } from './barChart.js'
+
+
 function visualizeData(data, width, height) {
 
     const xValue = d => d.x
@@ -19,15 +25,15 @@ function visualizeData(data, width, height) {
 
     const xScale = d3.scaleLinear()
 
-        //.domain(d3.extent(data, xValue))
-        .domain([xExtents[0] - 2, xExtents[1]])
+        .domain(d3.extent(data, xValue))
+        //.domain([xExtents[0] - 2, xExtents[1]])
         .range([0, innerWidth]);
 
 
     const yScale = d3.scaleLinear()
 
-        //.domain(d3.extent(data, yValue))
-        .domain([yExtents[0] - 3, yExtents[1]])
+        .domain(d3.extent(data, yValue))
+        //.domain([yExtents[0] - 3, yExtents[1]])
         .range([innerHeight, 0])
 
 
@@ -47,6 +53,18 @@ function visualizeData(data, width, height) {
 
     var svg = document.getElementById('myScatterplot')
 
+
+
+    const zoom = d3.zoom()
+        .scaleExtent([1, 30])
+        .on('zoom', (event) => {
+            g.attr('transform', event.transform)
+            d3.select(svg).selectAll(".scatterplotCircle")
+                .attr('transform', event.transform)
+        })
+
+    d3.select(svg).call(zoom)
+
     d3.select('#scatterplotG').remove()
 
     const g = d3.select(svg).append('g')
@@ -54,9 +72,11 @@ function visualizeData(data, width, height) {
         .attr('id', 'scatterplotG');
 
     g.append('g').call(xAxis)
-        .attr('transform', 'translate(' + 0 + ',' + innerHeight + ')');
+        .attr('transform', 'translate(' + 0 + ',' + innerHeight + ')')
+        .style("font-size", "15px");
 
-    g.append('g').call(yAxis);
+    g.append('g').call(yAxis)
+        .style("font-size", "15px");
 
     console.log(data)
 
@@ -83,6 +103,7 @@ function visualizeData(data, width, height) {
 
         .on('click', clicked)
         .on('mouseover', mouseOver)
+        .on('mouseout', mouseOut)
 
 
 }
@@ -101,6 +122,49 @@ function clicked() {
 
 function mouseOver(event, d) {
     console.log(d)
+    d3.select(this)
+
+
+        .attr('stroke-width', 10)
+
+        .transition()
+        .duration(1000)
+        .attr('r', 20)
+
+
+
+    d3.select(this)
+        .append("g:title")
+        .attr('x', 100)
+        .attr('y', 100)
+
+        //If relevance is null, put relevance = 0
+        .text(function (d) {
+            if (d.relevance == "") {
+                return d.name + ", " + d.category + ", " + 0
+
+            }
+            else {
+                return d.name + ", " + d.category + ", " + d.relevance
+            }
+        })
+
+    fromScatterplotToSingleCountryHoverIn(d)
+    fromScatterplotToBarchartHoverIn(d)
+}
+
+
+function mouseOut(event, d) {
+
+    d3.select(this)
+        .transition()
+        .duration(1000)
+        .attr('r', 7)
+        .attr('stroke-width', "1px");
+
+    fromScatterplotToSingleCountryHoverOut(d)
+    fromScatterplotToBarchartHoverOut(d)
+
 }
 
 
@@ -125,7 +189,14 @@ function myScatterplotFirstTime() {
     d3.tsv('./data_files/points_new.tsv')
         .then(data => {
 
-            var newData = data
+            var newData = []
+
+            data.filter(function (row) {
+                if (row['country_iso'] == "IT") {
+                    newData.push(row)
+                }
+
+            })
 
 
             console.log(newData)
@@ -199,6 +270,63 @@ function myScatterplot(selectedCountry, selectedCategory, selectedRelevance) {
 
 
 
+function makeCircleBigger(point) {
+    var scatterplotSvg = document.getElementById('myScatterplot')
+    var myDot = d3.select(scatterplotSvg)
+        .selectAll(".scatterplotCircle")
+        .filter(function (d) {
+            return d.name == point.name
+        })
+
+
+
+        .attr('stroke-width', 10)
+        .transition()
+        .duration(1000)
+        .attr('r', 20);
+
+}
+
+
+function makeCircleSmaller(point) {
+    var scatterplotSvg = document.getElementById('myScatterplot')
+    var myDot = d3.select(scatterplotSvg)
+        .selectAll(".scatterplotCircle")
+        .filter(function (d) {
+            return d.name == point.name
+        })
+
+        .transition()
+        .duration(1000)
+        .attr('r', 5)
+        .attr('stroke-width', "1px")
+
+}
+
+
+
+
+function fromSingleCountryToScatterplotHoverIn(point) {
+    makeCircleBigger(point)
+}
+
+
+function fromSingleCountryToScatterplotHoverOut(point) {
+    makeCircleSmaller(point)
+
+
+
+}
+
+function fromBarchartToScatterplotHoverIn(point) {
+    makeCircleBigger(point)
+
+}
+
+function fromBarchartToScatterplotHoverOut(point) {
+    makeCircleSmaller(point)
+
+}
 
 
 
@@ -212,7 +340,8 @@ function myScatterplot(selectedCountry, selectedCategory, selectedRelevance) {
 
 
 
-function scatterplot() {
+
+function scatterplotProf() {
     var chiavi
 
     var dataSelection = [];
@@ -435,7 +564,15 @@ function scatterplot() {
 
 
 
-export { scatterplot }
+
 export { myScatterplot };
 export { myScatterplotFirstTime };
+export { fromSingleCountryToScatterplotHoverIn }
+export { fromSingleCountryToScatterplotHoverOut }
+export { fromBarchartToScatterplotHoverIn }
+export { fromBarchartToScatterplotHoverOut }
+
+
+
+export { scatterplotProf }
 

@@ -5,8 +5,6 @@ const colorLegend = (selection, props) => {
         spacing,
         textOffset,
         backgroundRectWidth,
-        onClick,
-        selectedColorValue
     } = props;
 
 
@@ -21,7 +19,7 @@ const colorLegend = (selection, props) => {
         .attr('width', backgroundRectWidth)
         .attr('height', spacing * n)
         .attr('fill', 'white')
-        .attr('opacity', 0.8);
+        .attr('opacity', 0.9);
 
 
     const groups = selection.selectAll('.tick')
@@ -34,11 +32,7 @@ const colorLegend = (selection, props) => {
         .attr('transform', (d, i) =>
             `translate(0, ${i * spacing})`
         )
-        .attr('opacity', d =>
-            (!selectedColorValue || d === selectedColorValue) ? 1 : 0.2)
-
-        .on('click', (event, d) => onClick(null,
-            d === selectedColorValue ? null : d));
+     
 
     groups.exit().remove();
 
@@ -52,7 +46,8 @@ const colorLegend = (selection, props) => {
         .merge(groups.select('text'))
         .text(d => d)
         .attr('dy', '0.32em')
-        .attr('x', textOffset);
+        .attr('x', textOffset)
+        .style("font-size", "17px");
 }
 
 export { colorLegend };

@@ -1,5 +1,8 @@
 import { colorLegend } from './colorLegend.js'
-import { coordinateViewSingleCountry } from './barChart.js'
+import { fromSingleCountryToBarchartHoverIn } from './barChart.js'
+import { fromSingleCountryToBarchartHoverOut } from './barChart.js'
+import { fromSingleCountryToScatterplotHoverIn } from './scatterplot.js'
+import { fromSingleCountryToScatterplotHoverOut } from './scatterplot.js'
 
 
 let map;
@@ -12,7 +15,7 @@ function singleCountryMapFirstTime() {
 
     var mapDiv = document.createElement("div");
     mapDiv.id = "map";
-    mapDiv.class = "flex_item_secondary";
+    mapDiv.class = "flex_item_primary";
 
     document.getElementById("row1").appendChild(mapDiv);
 
@@ -39,6 +42,9 @@ function singleCountryMapFirstTime() {
     map.addControl(geocoder);
 
 
+    geocoder.query("IT");
+
+
     var container = map.getCanvasContainer();
     var svg = d3
         .select(container)
@@ -54,13 +60,34 @@ function singleCountryMapFirstTime() {
         .attr('id', 'colorLegendBase')
 
     const colorLegendG = d3.select('#colorLegendBase').append('g')
-        .attr('transform', 'translate(30,200)')
+        .attr('transform', 'translate(30,270)')
         .attr('id', 'colorLegendSingleCountry');
 
 
+    d3.tsv("./data_files/geoviewsnew_2.tsv")
+        .then(data => {
+
+            var newData = []
+
+
+            data.filter(function (row) {
 
 
 
+                if (row['country_iso'] == "IT") {
+
+                    newData.push(row)
+                }
+
+            })
+
+
+            putPointsOnMap(newData)
+
+
+
+
+        });
 
 
 }
@@ -74,11 +101,11 @@ function singleCountryMap(country_iso_code, selectedCategory, selectedRelevance,
 
     function filterData() {
 
-        d3.tsv("./data_files/geoviewsnew.tsv")
+        d3.tsv("./data_files/geoviewsnew_2.tsv")
             .then(data => {
 
                 var newData = []
-   
+
 
                 data.filter(function (row) {
 
@@ -125,129 +152,15 @@ function singleCountryMap(country_iso_code, selectedCategory, selectedRelevance,
                 console.log(newData)
 
 
-                const categoryScale = d3.scaleOrdinal();
-
-                categoryScale
-                    .domain(newData.map(d => d.category))
-                    .range(['#543005', '#8c510a', '#bf812d', '#dfc27d', '#f6e8c3', '#c7eae5', '#80cdc1', '#35978f', '#01665e', '#003c30'])
-
-
-                var singleCountryMapSvg = document.getElementById('mapSingleCountry')
-
-                var dots = d3.select(singleCountryMapSvg)
-                    .selectAll(".sitesSingleCountry")
-                    .data(newData)
-                    .enter()
-                    .append("circle")
-                    .attr('class', 'sitesSingleCountry')
-                    .attr("r", 7)
-                    .attr("stroke", "black")
-                    .attr("stroke-width", "1px")
-
-
-                    .attr("fill", function (d) {
-                        return categoryScale(d.category)
-                    });
-
-
-                dots
-
-                    .on('mouseover', mouseOver)
+                putPointsOnMap(newData)
 
 
 
-
-                /*
- 
-    .merge(circlesEnter)
-    .attr('opacity', d => 
-    (!selectedColorValue || d.category === selectedColorValue) ? 1 : 0.2)
-                */
-
-
-                map.on("viewreset", render);
-                map.on("move", render);
-                map.on("moveend", render);
-                render(); // Call once to render
-
-
-                function render() {
-                    dots
-                        .attr("cx", function (d) {
-                            return project(d).x;
-                        })
-                        .attr("cy", function (d) {
-                            return project(d).y;
-                        });
-                }
-
-
-
-                let selectedColorValue;
-
-                const colorLegendG = document.getElementById('colorLegendSingleCountry');
-
-
-
-                d3.select(colorLegendG)
-                    .call(colorLegend, {
-                        colorScale: categoryScale,
-                        circleRadius: 5,
-                        spacing: 20,
-                        textOffset: 10,
-                        backgroundRectWidth: 90,
-                        //onClick,
-                        selectedColorValue: selectedColorValue
-                    });
 
 
             });
 
     }
-
-
-
-
-
-    function project(d) {
-        return map.project(new mapboxgl.LngLat(d["longitude"], d["latitude"]));
-    }
-
-
-
-    function mouseOver(event, d) {
-
-
-        console.log(d)
-
-
-        d3.select(this)
-
-            .append("g:title")
-            .attr('x', 100)
-            .attr('y', 100)
-            .text(function (d) { return d.name + ", " + d.relevance })
-
-
-
-        /*
-
-        
-
-     
-        .transition()
-        .duration(1000)
-        .attr('r', 10)
- 
-        */
-
-
-        coordinateViewSingleCountry(d);
-
-    }
-
-
-
 
 
 
@@ -273,33 +186,229 @@ function singleCountryMap(country_iso_code, selectedCategory, selectedRelevance,
 
 
 
+function putPointsOnMap(newData) {
 
-function coordinateWithBarchart(point)
-{
-    console.log("Sto in single country e viene da barchart")
-    console.log(point)
-    console.log(point.name)
+    const categoryScale = d3.scaleOrdinal();
+
+    categoryScale
+        .domain(newData.map(d => d.category))
+        //.range(['#543005', '#8c510a', '#bf812d', '#dfc27d', '#f6e8c3', '#c7eae5', '#80cdc1', '#35978f', '#01665e', '#003c30'])
+        .range(['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a']);
+
+
     var singleCountryMapSvg = document.getElementById('mapSingleCountry')
-    var myDot = d3.select(singleCountryMapSvg)
-    .selectAll(".sitesSingleCountry")
-    .filter(function(d) { 
-        return d.name == point.name
-    })
+
+    var dots = d3.select(singleCountryMapSvg)
+        .selectAll(".sitesSingleCountry")
+        .data(newData)
+        .enter()
+        .append("circle")
+        .attr('class', 'sitesSingleCountry')
+        .attr("r", 7)
+        .attr("stroke", "black")
+        .attr("stroke-width", "1px")
 
 
-    .attr('stroke-width', 10)
+        .attr("fill", function (d) {
+            return categoryScale(d.category)
+        });
+
+
+    dots
+
+        .on('mouseover', mouseOver)
+        .on('mouseout', mouseOut)
+
+
+
+
  
-    .transition()
+
+    map.on("viewreset", render);
+    map.on("move", render);
+    map.on("moveend", render);
+    render(); // Call once to render
+
+
+    function render() {
+        dots
+            .attr("cx", function (d) {
+                return project(d).x;
+            })
+            .attr("cy", function (d) {
+                return project(d).y;
+            });
+    }
+
+
+
+  
+
+    const colorLegendG = document.getElementById('colorLegendSingleCountry');
+
+
+
+    d3.select(colorLegendG)
+        .call(colorLegend, {
+            colorScale: categoryScale,
+            circleRadius: 5,
+            spacing: 25,
+            textOffset: 10,
+            backgroundRectWidth: 200,
+        });
+
+}
+
+
+function project(d) {
+    return map.project(new mapboxgl.LngLat(d["longitude"], d["latitude"]));
+}
+
+
+
+function mouseOver(event, d) {
+
+    console.log(d)
+
+    d3.select(this)
+
+
+        .attr('stroke-width', 10)
+
+        .transition()
         .duration(1000)
         .attr('r', 20)
+
+
+
+
+
+    d3.select(this)
+        .append("g:title")
+        .attr('x', 100)
+        .attr('y', 100)
+
+        //If relevance is null, put relevance = 0
+        .text(function (d) {
+            if (d.relevance == "") {
+                return d.name + ", " + 0
+
+            }
+            else {
+                return d.name + ", " + d.relevance
+            }
+        })
+
+    fromSingleCountryToBarchartHoverIn(d);
+    fromSingleCountryToScatterplotHoverIn(d);
+
+}
+
+
+
+
+function mouseOut(event, d) {
+
+    d3.select(this)
+
+
+
+        .transition()
+        .duration(1000)
+        .attr('r', 7)
+        .attr('stroke-width', "1px");
+
+
+
+    fromSingleCountryToBarchartHoverOut(d);
+    fromSingleCountryToScatterplotHoverOut(d)
+
+}
+
+
+
+function makeCircleBigger(point) {
+
+    var singleCountryMapSvg = document.getElementById('mapSingleCountry')
+    var myDot = d3.select(singleCountryMapSvg)
+        .selectAll(".sitesSingleCountry")
+        .filter(function (d) {
+            return d.name == point.name
+        })
+
+
+
+        .attr('stroke-width', 10)
+        .transition()
+        .duration(1000)
+        .attr('r', 20);
+
+}
+
+
+function makeCircleSmaller(point) {
+
+    var singleCountryMapSvg = document.getElementById('mapSingleCountry')
+    var myDot = d3.select(singleCountryMapSvg)
+        .selectAll(".sitesSingleCountry")
+        .filter(function (d) {
+            return d.name == point.name
+        })
 
         .transition()
         .duration(1000)
         .attr('r', 5)
-                 
+        .attr('stroke-width', "1px")
+
+}
+
+
+
+
+
+function fromBarchartToSingleCountryHoverIn(point) {
+
+
+    makeCircleBigger(point)
+
+}
+
+
+
+function fromBarchartToSingleCountryHoverOut(point) {
+
+    makeCircleSmaller(point)
+
+}
+
+
+
+
+function fromBarchartToSingleCountryClick(point) {
+    map.flyTo({
+        center: [point.longitude, point.latitude], //[lng, lat]
+        zoom: 10
+    })
+
+}
+
+
+
+function fromScatterplotToSingleCountryHoverIn(point) {
+    makeCircleBigger(point)
+
+}
+
+function fromScatterplotToSingleCountryHoverOut(point) {
+    makeCircleSmaller(point)
+
 }
 
 
 export { singleCountryMap };
 export { singleCountryMapFirstTime }
-export { coordinateWithBarchart }
+export { fromBarchartToSingleCountryHoverIn }
+export { fromBarchartToSingleCountryHoverOut }
+export { fromBarchartToSingleCountryClick }
+export { fromScatterplotToSingleCountryHoverIn }
+export { fromScatterplotToSingleCountryHoverOut }

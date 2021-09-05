@@ -1,4 +1,8 @@
-import { coordinateWithBarchart } from './singleCountryMap.js'
+import { fromBarchartToSingleCountryHoverIn } from './singleCountryMap.js'
+import { fromBarchartToSingleCountryHoverOut } from './singleCountryMap.js'
+import { fromBarchartToSingleCountryClick } from './singleCountryMap.js'
+import { fromBarchartToScatterplotHoverIn } from './scatterplot.js'
+import { fromBarchartToScatterplotHoverOut } from './scatterplot.js'
 
 
 
@@ -6,11 +10,28 @@ import { coordinateWithBarchart } from './singleCountryMap.js'
 function visualizeData(data, width, height) {
 
     const xValue = d => +d.relevance
-    const yValue = d => d.name
+    //const yValue = d => d.name
+
+
+
+    //Necessary otherwise the name of the site doesn't fit the svg
+    var yValue = (d) => {
+
+        if ((String(d.name).length) >= 19) {
+            return d.name.substring(0, 18)
+        }
+        else {
+            return d.name
+        }
+    }
+
+
+
+
 
 
     //Play with margin left for words in vertical axis
-    const margin = { top: 20, right: 20, bottom: 20, left: 150 };
+    const margin = { top: 20, right: 20, bottom: 30, left: 150 };
 
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
@@ -28,7 +49,8 @@ function visualizeData(data, width, height) {
 
 
 
-    const xAxis = d3.axisBottom(xScale);
+    //Use ticks to decide how many maximum ticks can be in xAxis
+    const xAxis = d3.axisBottom(xScale).ticks(4);
     const yAxis = d3.axisLeft(yScale);
 
 
@@ -51,10 +73,16 @@ function visualizeData(data, width, height) {
 
     g.append('g').call(xAxis)
         .attr('transform', 'translate(' + 0 + ',' + innerHeight + ')')
+
         .style("font-size", "15px");
 
     g.append('g').call(yAxis)
+
         .style("font-size", "15px");
+
+
+    console.log(yScale.domain().length)
+
 
 
     g.selectAll('rect')
@@ -63,8 +91,18 @@ function visualizeData(data, width, height) {
         .enter()
         .append('rect')
         .attr('y', d => yScale(yValue(d)))
+
+        /*
+        .attr('y', function(d)
+        {
+            return yScale(yValue(d)) +   150/yScale.domain().length
+        })
+
+        */
+
         .attr('width', d => xScale(xValue(d)))
         .attr('height', yScale.bandwidth())
+        //.attr('height', 40)
         .attr('class', "barchartRects")
 
 
@@ -78,22 +116,61 @@ function visualizeData(data, width, height) {
 
         .on('click', clicked)
         .on('mouseover', mouseOver)
+        .on('mouseout', mouseOut)
 
 
-    function clicked() {
+    function clicked(event, d) {
 
-        d3.select(this)
-            .attr('class', 'clicked_rect')
-            .transition()
-            .duration(1000)
-            .attr('width', 100)
+        fromBarchartToSingleCountryClick(d)
+
 
 
     }
 
     function mouseOver(event, d) {
         console.log(d)
-        coordinateWithBarchart(d)
+
+
+        d3.select(this)
+            .transition()
+            .duration(500)
+            .style("fill", "green")
+
+
+
+        d3.select(this)
+            .append("g:title")
+            .attr('x', 100)
+            .attr('y', 100)
+
+            //If relevance is null, put relevance = 0
+            .text(function (d) {
+                if (d.relevance == "") {
+                    return d.name + ", " + d.category + ", " + 0
+
+                }
+                else {
+                    return d.name + ", " + d.category + ", " + d.relevance
+                }
+            })
+
+
+
+
+        fromBarchartToSingleCountryHoverIn(d)
+        fromBarchartToScatterplotHoverIn(d)
+    }
+
+
+
+    function mouseOut(event, d) {
+        d3.select(this)
+            .transition()
+            .duration(500)
+            .style('fill', "steelblue")
+
+        fromBarchartToSingleCountryHoverOut(d)
+        fromBarchartToScatterplotHoverOut(d)
     }
 }
 
@@ -115,12 +192,12 @@ function myBarChartFirstTime() {
         .attr("class", "flex_item_secondary")
         .attr('id', "barchart")
 
-    d3.tsv("./data_files/geoviewsnew.tsv")
+    d3.tsv("./data_files/geoviewsnew_2.tsv")
         .then(data => {
             var newData = []
 
             data.filter(function (row) {
-                if (row['relevance'] >= 0) {
+                if (row['relevance'] >= 0 && row['country_iso'] == "IT") {
                     newData.push(row)
                 }
 
@@ -151,7 +228,7 @@ function myBarChart(selectedCountry, selectedCategory, selectedRelevance) {
     const width = window.innerWidth / 3;
     const height = window.innerHeight / 7 * 3;
 
-    d3.tsv("./data_files/geoviewsnew.tsv")
+    d3.tsv("./data_files/geoviewsnew_2.tsv")
         .then(data => {
             var newData = []
 
@@ -200,8 +277,7 @@ function myBarChart(selectedCountry, selectedCategory, selectedRelevance) {
 }
 
 
-
-function coordinateViewSingleCountry(bar) {
+function highlightRectangleOn(bar) {
     var myBarchart = document.getElementById('barchart')
     var selectedBar = d3.select(myBarchart)
         .selectAll(".barchartRects")
@@ -212,17 +288,56 @@ function coordinateViewSingleCountry(bar) {
         .transition()
         .duration(1000)
         .style("fill", "green")
+
+}
+
+function highlightRectangleOff(bar) {
+    var myBarchart = document.getElementById('barchart')
+    var selectedBar = d3.select(myBarchart)
+        .selectAll(".barchartRects")
+        .filter(function (d) {
+            return d.name == bar.name
+        })
+
         .transition()
         .duration(1000)
         .style('fill', "steelblue")
+
+}
+
+
+
+function fromSingleCountryToBarchartHoverIn(bar) {
+    highlightRectangleOn(bar)
+
 
 
 
 }
 
 
+function fromSingleCountryToBarchartHoverOut(bar) {
+
+    highlightRectangleOff(bar)
+}
+
+function fromScatterplotToBarchartHoverIn(bar) {
+    highlightRectangleOn(bar)
+
+}
+
+function fromScatterplotToBarchartHoverOut(bar) {
+    highlightRectangleOff(bar)
+}
+
+
+
+
 export { myBarChart }
 export { myBarChartFirstTime }
-export { coordinateViewSingleCountry }
+export { fromSingleCountryToBarchartHoverIn }
+export { fromSingleCountryToBarchartHoverOut }
+export { fromScatterplotToBarchartHoverIn }
+export { fromScatterplotToBarchartHoverOut }
 
 

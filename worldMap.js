@@ -2,7 +2,7 @@ import { singleCountryMap } from './singleCountryMap.js'
 import { myBarChart } from './barChart.js';
 import { colorLegend } from './colorLegend.js'
 import { myStarPlot } from './starPlot.js';
-import {myScatterplot} from './scatterplot.js';
+import { myScatterplot } from './scatterplot.js';
 
 
 
@@ -11,7 +11,7 @@ let countries;
 
 
 function clickOnCountry(event, d) {
-   
+
     var categoryMenu = document.getElementById("categoryMenu");
     var relevanceMenu = document.getElementById("relevanceMenu");
 
@@ -42,13 +42,27 @@ function createColorLegend(countries) {
 
     var svg = document.getElementById('worldMap')
     const colorLegendG = d3.select(svg).append('g')
-        .attr('transform', 'translate(30,160)')
+        .attr('transform', 'translate(30,370)')
+        .attr('id', 'colorLegendWorldMap')
+
 
     var colorScale = d3.scaleQuantile()
     //var colorScale = d3.scaleQuantize()
     //const colorScale = d3.scaleOrdinal((d3.schemeCategory10))
 
-    colorScale.domain([0, 100, 1000, 10000, d3.max(countries.features, d => d.properties.sites_number)])
+
+    var maxValue = d3.max(countries.features, d => d.properties.sites_number)
+    if (maxValue > 10000)
+        maxValue = 10000
+    else if (maxValue > 1000 && maxValue < 10000)
+        maxValue = 1000
+    else if (maxValue > 100 && maxValue < 1000)
+        maxValue = 100
+    else if (maxValue > 10 && maxValue < 100)
+        maxValue = 10
+
+    //colorScale.domain([0, 100, 1000, 10000, d3.max(countries.features, d => d.properties.sites_number)])
+    colorScale.domain([0, Math.floor(maxValue / 10 * 0.1), Math.floor(maxValue / 10 * 1), Math.floor(maxValue / 10 * 5), maxValue])
     colorScale.range(['#feedde', '#fdbe85', '#fd8d3c', '#d94701'])
     console.log("ColorScale domain", colorScale.domain())
 
@@ -68,8 +82,7 @@ function createColorLegend(countries) {
 
 
 
-function colorWorldMap(countries, path) 
-{
+function colorWorldMap(countries, path) {
     var colorScale = createColorLegend(countries);
 
 
@@ -91,7 +104,7 @@ function colorWorldMap(countries, path)
         .on('click', clickOnCountry)
 
         .append('title')
-        .text(d => d.properties.NAME + ',' + d.properties.sites_number)
+        .text(d => d.properties.NAME + ', ' + d.properties.sites_number)
 
 }
 
@@ -137,19 +150,10 @@ function worldMapFirstTime() {
 
 
 
-    let selectedColorValue;
-
-
-
-    const onClick = (event, d) => {
-        selectedColorValue = d;
-        render()
-
-    }
 
 
     Promise.all([
-        d3.tsv('./data_files/geoviewsnew.tsv'),
+        d3.tsv('./data_files/geoviewsnew_2.tsv'),
         d3.json('./data_files/ne_50m_admin_0_countries.topojson')
 
     ]).then(([csvData, topoJSONData]) => {
@@ -233,23 +237,10 @@ function worldMap(selectedCategory, selectedRelevance) {
 
 
 
-    let selectedColorValue;
-
-
-
-
-    const onClick = (event, d) => {
-        selectedColorValue = d;
-        render()
-
-    }
-
-
-
     var updatedCsvData = []
 
 
-    d3.tsv("./data_files/geoviewsnew.tsv")
+    d3.tsv("./data_files/geoviewsnew_2.tsv")
         .then(csvData => {
 
 
@@ -307,7 +298,8 @@ function worldMap(selectedCategory, selectedRelevance) {
             });
 
 
-
+            var myColorLegend = document.getElementById('colorLegendWorldMap');
+            d3.select(myColorLegend).remove();
             colorWorldMap(countries, path);
 
 

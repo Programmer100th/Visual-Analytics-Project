@@ -46,7 +46,7 @@
 }
 
 .country:hover {
-    fill:red
+    fill: green
 }
 
 
@@ -66,12 +66,6 @@
 
 
 
-
-.clicked_rect {
-    fill: red;
-}
-
-
 .myLabel {
     font-size: 0.7em;
 }
@@ -84,23 +78,29 @@
 
 
 
-
+/*Color Legend */
 
 .tick {
-    cursor: pointer;
+    cursor: default;
 }
 
 
 .tick text {
-    font-size: 1.0em;
     fill: black;
-    font-family: sans-serif;;
+    font-family: sans-serif;
 }
 
 .tick circle {
     stroke: black;
     stroke-opacity: 0.5;
 }
+
+
+
+
+
+
+
 
 
 svg
