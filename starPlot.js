@@ -16,7 +16,7 @@ var starPlot = {
         TranslateY: 40,
         ExtraWidthX: 100,
         ExtraWidthY: 100,
-        color: d3.schemeCategory10
+        color: 'steelblue'
       };
   
       if ('undefined' !== typeof options) {
@@ -103,7 +103,7 @@ var starPlot = {
         .attr("class", "legend")
         .text(function (d) { return d })
         .style("font-family", "Montserrat")
-        .style("font-size", "11px")
+        .style("font-size", "14px")
         .attr("text-anchor", "middle")
         .attr("dy", "1.5em")
         .attr("transform", function (d, i) { return "translate(-5, -20)" })
@@ -130,7 +130,8 @@ var starPlot = {
           .append("polygon")
           .attr("class", "radar-chart-serie" + series)
           .style("stroke-width", "4px")
-          .style("stroke", cfg.color(series))
+          //.style("stroke", cfg.color(series))
+          .style("stroke", cfg.color)
           .attr("points", function (d) {
             var str = "";
             for (var pti = 0; pti < d.length; pti++) {
@@ -138,7 +139,8 @@ var starPlot = {
             }
             return str;
           })
-          .style("fill", function (j, i) { return cfg.color(series) })
+          //.style("fill", function (j, i) { return cfg.color(series) })
+          .style("fill", cfg.color)
           .style("fill-opacity", cfg.opacityArea)
           .on('mouseover', function (d) {
             let z = "polygon." + d3.select(this).attr("class");
@@ -261,10 +263,21 @@ var starPlot = {
                 function add(accumulator, a) {
                   return accumulator + a;
                 }
+
+                console.log(arrayOfSites)
     
                 for (var i in arrayOfFCategories) {
       
-                  var site = parseInt(arrayOfSites[i])
+                  var category = arrayOfFCategories[i]
+
+                  var index;
+
+                  for (var j in arrayOfCategories) {
+                    if(arrayOfCategories[j] === category)
+                      index = j
+                  }
+
+                  var site = parseInt(arrayOfSites[index])
                   if(isNaN(site)) site = 0
       
                   currentdata.push({
@@ -276,15 +289,15 @@ var starPlot = {
                 finaldata.push(currentdata);
                 console.log(JSON.stringify(finaldata))
       
-                var colorScale = d3.scaleLinear().domain([0, finaldata.length])
-                  .range(["#FF9300", "#0049FF"]);
+                //var colorScale = d3.scaleLinear().domain([0, finaldata.length])
+                //  .range(["#FF9300", "#0049FF"]);
       
                 //Options for the star plot, other than default
                 var mycfg = {
-                  w: w - 160,
-                  h: h - 60,
-                  maxValue: 100,
-                  color: colorScale
+                  w: w - 170,
+                  h: h - 80,
+                  maxValue: 100
+                  //color: colorScale
                   //levels: 6,
                   //ExtraWidthX: 200
                 }
@@ -304,8 +317,8 @@ var starPlot = {
     // Remove the previous star plot
     //d3.select("#row2").select("#starplot").remove();
   
-    var w = document.getElementById("starplot").clientWidth - 160,
-        h = document.getElementById("starplot").clientHeight - 60;
+    var w = document.getElementById("starplot").clientWidth - 170,
+        h = document.getElementById("starplot").clientHeight - 80;
 
     selectedRelevance = isNaN(selectedRelevance) ? 0 : parseInt(selectedRelevance)
   
@@ -332,17 +345,25 @@ var starPlot = {
             var arrayOfFCategories = fCategoriesArray.map(x => x[0]);
             var arrayOfFValues = fCategoriesArray.map(x => x[1]);
   
-            var newData           = [],
+            var dataSingleCountry = [],
+                dataWorld         = [],
                 arrayOfValues     = []
 
             //Sites for the chosen country
             tsvData.filter(function(row){ 
               if (row['country_iso'] == selectedCountry && row['relevance'] >= selectedRelevance)
-                newData.push(row)
+                dataSingleCountry.push(row)
+              else if(selectedCountry == "World" && row['relevance'] >= selectedRelevance)
+                dataWorld.push(row)
             });
   
             //Polygon of the chosen country
-            var values = d3.group(newData, d => d.category)
+            var values;
+
+            if(selectedCountry == 'World')
+              values = d3.group(dataWorld, d => d.category)
+            else
+              values = d3.group(dataSingleCountry, d => d.category)
 
             for(var i in arrayOfFCategories){
               var v = values.get(arrayOfFCategories[i])
@@ -365,7 +386,7 @@ var starPlot = {
             const sortedCat    = indices.map(i => arrayOfCategories[i])
             const sortedValues = indices.map(i => arrayOfValues[i])*/
   
-            const sum = arrayOfValues.reduce(add, 0); // with initial value to avoid when the array is empty
+            var value, sum; // with initial value to avoid when the array is empty
 
             function add(accumulator, a) {
               return accumulator + a;
@@ -375,7 +396,11 @@ var starPlot = {
 
             for (var i in arrayOfFCategories) {
   
-              var value = selectedCountry == "World" ? parseInt(arrayOfFValues[i]) : parseInt(arrayOfValues[i])
+              value = parseInt(arrayOfValues[i])
+              sum   = arrayOfValues.reduce(add, 0)
+              
+
+              //var value = selectedCountry == "World" ? parseInt(arrayOfFValues[i]) : parseInt(arrayOfValues[i])
               if(isNaN(value)) value = 0
 
               //console.log(value, sortedValues[i])
@@ -389,15 +414,15 @@ var starPlot = {
             finaldata.push(currentdata);
             console.log(JSON.stringify(finaldata))
   
-            var colorScale = d3.scaleLinear().domain([0, finaldata.length])
-              .range(["#FF9300", "#0049FF"]);
+            //var colorScale = d3.scaleLinear().domain([0, finaldata.length])
+            //  .range(["#FF9300", "#0049FF"]);
   
             //Options for the star plot, other than default
             var mycfg = {
               w: w,
               h: h,
-              maxValue: 100,
-              color: colorScale
+              maxValue: 100
+              //color: colorScale
               //levels: 6,
               //ExtraWidthX: 200
             }
