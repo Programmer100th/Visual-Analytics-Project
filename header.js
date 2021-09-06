@@ -88,7 +88,7 @@ function myHeader() {
             singleCountryMap(currentCountry, selectedCategory, currentRelevance, false)
             myBarChart(currentCountry, selectedCategory, currentRelevance)
             worldMap(selectedCategory, currentRelevance)
-            myStarPlot(currentCountry)
+            myStarPlot(currentCountry, currentRelevance)
             myScatterplot(currentCountry, selectedCategory, currentRelevance)
 
         });
@@ -105,7 +105,7 @@ function myHeader() {
 
             singleCountryMap(selectedCountry, currentCategory, currentRelevance, true)
             myBarChart(selectedCountry, currentCategory, currentRelevance)
-            myStarPlot(selectedCountry)
+            myStarPlot(selectedCountry, currentRelevance)
             myScatterplot(selectedCountry, currentCategory, currentRelevance)
 
         });
@@ -123,7 +123,7 @@ function myHeader() {
             singleCountryMap(currentCountry, currentCategory, selectedRelevance, false)
             myBarChart(currentCountry, currentCategory, selectedRelevance)
             worldMap(currentCategory, selectedRelevance)
-            myStarPlot(currentCountry)
+            myStarPlot(currentCountry, selectedRelevance)
             myScatterplot(currentCountry, currentCategory, selectedRelevance)
 
         });
