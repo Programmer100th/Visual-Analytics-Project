@@ -89,20 +89,24 @@ function visualizeData(data, width, height) {
 
         .data(data)
         .enter()
+
         .append('rect')
+
+
         .attr('y', d => yScale(yValue(d)))
 
+
+        
         /*
         .attr('y', function(d)
         {
-            return yScale(yValue(d)) +   150/yScale.domain().length
+            return yScale(yValue(d)) +   yScale.domain().length
         })
 
         */
 
-        .attr('width', d => xScale(xValue(d)))
-        .attr('height', yScale.bandwidth())
-        //.attr('height', 40)
+        
+
         .attr('class', "barchartRects")
 
 
@@ -112,7 +116,23 @@ function visualizeData(data, width, height) {
         })
         */
 
+
+
         .attr("fill", "steelblue")
+
+        .attr('height', yScale.bandwidth())
+        //.attr('height', 40)
+
+        .transition()
+        .duration(1500)
+        .attr('width', d => xScale(xValue(d)));
+
+
+
+
+
+
+    g.selectAll('rect')
 
         .on('click', clicked)
         .on('mouseover', mouseOver)
@@ -130,11 +150,17 @@ function visualizeData(data, width, height) {
     function mouseOver(event, d) {
         console.log(d)
 
+        d3.selectAll(".barchartRects")
+            .transition()
+            .duration(500)
+            .attr('opacity', 0.4)
+
 
         d3.select(this)
             .transition()
             .duration(500)
-            .style("fill", "green")
+            //.style("fill", "green")
+            .attr('opacity', 1)
 
 
 
@@ -164,10 +190,18 @@ function visualizeData(data, width, height) {
 
 
     function mouseOut(event, d) {
+
+        d3.selectAll(".barchartRects")
+            .transition()
+            .duration(500)
+            .attr('opacity', 1)
+
+
         d3.select(this)
             .transition()
             .duration(500)
             .style('fill', "steelblue")
+
 
         fromBarchartToSingleCountryHoverOut(d)
         fromBarchartToScatterplotHoverOut(d)

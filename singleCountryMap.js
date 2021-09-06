@@ -204,9 +204,9 @@ function putPointsOnMap(newData) {
         .enter()
         .append("circle")
         .attr('class', 'sitesSingleCountry')
-        .attr("r", 7)
+        .attr("r", 10)
         .attr("stroke", "black")
-        .attr("stroke-width", "1px")
+        .attr("stroke-width", "2px")
 
 
         .attr("fill", function (d) {
@@ -273,7 +273,7 @@ function mouseOver(event, d) {
     d3.select(this)
 
 
-        .attr('stroke-width', 10)
+        .attr('stroke-width', 5)
 
         .transition()
         .duration(1000)
@@ -315,8 +315,8 @@ function mouseOut(event, d) {
 
         .transition()
         .duration(1000)
-        .attr('r', 7)
-        .attr('stroke-width', "1px");
+        .attr('r', 10)
+        .attr('stroke-width', "2px");
 
 
 
@@ -338,7 +338,7 @@ function makeCircleBigger(point) {
 
 
 
-        .attr('stroke-width', 10)
+        .attr('stroke-width', 5)
         .transition()
         .duration(1000)
         .attr('r', 20);
@@ -357,8 +357,8 @@ function makeCircleSmaller(point) {
 
         .transition()
         .duration(1000)
-        .attr('r', 5)
-        .attr('stroke-width', "1px")
+        .attr('r', 10)
+        .attr('stroke-width', "2px")
 
 }
 
@@ -387,7 +387,7 @@ function fromBarchartToSingleCountryHoverOut(point) {
 function fromBarchartToSingleCountryClick(point) {
     map.flyTo({
         center: [point.longitude, point.latitude], //[lng, lat]
-        zoom: 10
+        zoom: 15
     })
 
 }

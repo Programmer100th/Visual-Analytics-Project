@@ -46,24 +46,68 @@ function createColorLegend(countries) {
         .attr('id', 'colorLegendWorldMap')
 
 
-    var colorScale = d3.scaleQuantile()
+
+    var colorScale = d3.scaleThreshold()
+    //var colorScale = d3.scaleQuantile()
     //var colorScale = d3.scaleQuantize()
-    //const colorScale = d3.scaleOrdinal((d3.schemeCategory10))
 
 
     var maxValue = d3.max(countries.features, d => d.properties.sites_number)
-    if (maxValue > 10000)
+
+    //If else are needed to change dynamically the legend and the colors to fit the data in the best possible way
+
+    if (maxValue >= 10000) {
         maxValue = 10000
-    else if (maxValue > 1000 && maxValue < 10000)
+        var colors = ['#feedde', '#fdbe85', '#fd8d3c', '#e6550d', '#a63603'];
+        colorScale.domain([0, 10, 500, 1000, maxValue])
+        colorScale.range([0].concat(colors));
+        //colorScale.range(['#feedde','#fdbe85','#fd8d3c','#e6550d','#a63603'])
+    }
+
+    else if (maxValue >= 1000 && maxValue < 10000) {
         maxValue = 1000
-    else if (maxValue > 100 && maxValue < 1000)
+        var colors = ['#feedde', '#fdbe85', '#fd8d3c', '#e6550d', '#a63603']
+        colorScale.domain([0, 50, 200, 500, maxValue])
+        colorScale.range([0].concat(colors));
+        //colorScale.range(['#feedde','#fdbe85','#fd8d3c','#e6550d','#a63603'])
+    }
+    else if (maxValue >= 100 && maxValue < 1000) {
         maxValue = 100
-    else if (maxValue > 10 && maxValue < 100)
+        var colors = ['#feedde', '#fdbe85', '#fd8d3c', '#e6550d', '#a63603']
+        colorScale.domain([0, 3, 10, 50, maxValue])
+        colorScale.range([0].concat(colors));
+        //colorScale.range(['#feedde','#fdbe85','#fd8d3c','#e6550d','#a63603'])
+    }
+    else if (maxValue >= 10 && maxValue < 100) {
         maxValue = 10
+        var colors = ['#feedde', '#fdbe85', '#fd8d3c', '#d94701']
+        colorScale.domain([0, 1, 5, maxValue])
+        colorScale.range([0].concat(colors));
+        //colorScale.range(['#feedde', '#fdbe85', '#fd8d3c', '#d94701'])
+    }
+    else if (maxValue > 1 && maxValue < 10) {
+        var colors = ['#fee6ce', '#fdae6b', '#e6550d']
+        colorScale.domain([0, 1, maxValue])
+        colorScale.range([0].concat(colors));
+        //colorScale.range(['#fee6ce', '#fdae6b', '#e6550d'])
+
+    }
+    else if (maxValue == 1) {
+        var colors = ['#fee6ce', '#e6550d']
+        colorScale.domain([0, 1])
+        colorScale.range([0].concat(colors));
+        //colorScale.range(['#fee6ce', '#e6550d', 'blue'])
+
+    }
+    else {
+        var colors = ['#feedde']
+        colorScale.domain([0])
+        colorScale.range([0].concat(colors));
+        //colorScale.range(['#feedde'])
+    }
 
     //colorScale.domain([0, 100, 1000, 10000, d3.max(countries.features, d => d.properties.sites_number)])
-    colorScale.domain([0, Math.floor(maxValue / 10 * 0.1), Math.floor(maxValue / 10 * 1), Math.floor(maxValue / 10 * 5), maxValue])
-    colorScale.range(['#feedde', '#fdbe85', '#fd8d3c', '#d94701'])
+    //colorScale.range(['#feedde', '#fdbe85', '#fd8d3c', '#d94701'])
     console.log("ColorScale domain", colorScale.domain())
 
 

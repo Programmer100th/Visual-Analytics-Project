@@ -25,15 +25,15 @@ function visualizeData(data, width, height) {
 
     const xScale = d3.scaleLinear()
 
-        .domain(d3.extent(data, xValue))
-        //.domain([xExtents[0] - 2, xExtents[1]])
+        //.domain(d3.extent(data, xValue))
+        .domain([xExtents[0] - 2, xExtents[1]])
         .range([0, innerWidth]);
 
 
     const yScale = d3.scaleLinear()
 
-        .domain(d3.extent(data, yValue))
-        //.domain([yExtents[0] - 3, yExtents[1]])
+        //.domain(d3.extent(data, yValue))
+        .domain([yExtents[0] - 3, yExtents[1]])
         .range([innerHeight, 0])
 
 
@@ -55,6 +55,8 @@ function visualizeData(data, width, height) {
 
 
 
+    /*
+
     const zoom = d3.zoom()
         .scaleExtent([1, 30])
         .on('zoom', (event) => {
@@ -64,6 +66,8 @@ function visualizeData(data, width, height) {
         })
 
     d3.select(svg).call(zoom)
+
+    */
 
     d3.select('#scatterplotG').remove()
 
