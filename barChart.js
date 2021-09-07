@@ -94,7 +94,7 @@ function visualizeData(data, width, height) {
         .attr('y', d => yScale(yValue(d)))
 
 
-        
+
         /*
         .attr('y', function(d)
         {
@@ -103,7 +103,7 @@ function visualizeData(data, width, height) {
 
         */
 
-        
+
 
         .attr('class', "barchartRects")
 
@@ -148,17 +148,14 @@ function visualizeData(data, width, height) {
     function mouseOver(event, d) {
         console.log(d)
 
-        d3.selectAll(".barchartRects")
-            .transition()
-            .duration(500)
-            .attr('opacity', 0.4)
+       
 
 
         d3.select(this)
             .transition()
             .duration(500)
-            //.style("fill", "green")
-            .attr('opacity', 1)
+            .style("fill", "green")
+          
 
 
 
@@ -188,12 +185,6 @@ function visualizeData(data, width, height) {
 
 
     function mouseOut(event, d) {
-
-        d3.selectAll(".barchartRects")
-            .transition()
-            .duration(500)
-            .attr('opacity', 1)
-
 
         d3.select(this)
             .transition()
@@ -265,36 +256,38 @@ function myBarChart(selectedCountry, selectedCategory, selectedRelevance) {
             var newData = []
 
             data.filter(function (row) {
-                if (selectedCountry == null || selectedCountry == "World") {
-                    if (selectedCategory == "All" && row['relevance'] >= selectedRelevance) {
-                        newData.push(row)
+                if (row['relevance'] != "") {
+                    if (selectedCountry == null || selectedCountry == "World") {
+                        if (selectedCategory == "All" && row['relevance'] >= selectedRelevance) {
+                            newData.push(row)
 
-                    }
-                    else if (row['relevance'] >= selectedRelevance && row['category'] == selectedCategory) {
-
-                        newData.push(row)
-
-                    }
-
-                }
-                else {
-                    if (row['country_iso'] == selectedCountry && row['relevance'] >= selectedRelevance) {
-                        if (selectedCategory == "All") {
+                        }
+                        else if (row['relevance'] >= selectedRelevance && row['category'] == selectedCategory) {
 
                             newData.push(row)
 
+                        }
 
-                        }
-                        else if (row['category'] == selectedCategory) {
-                            newData.push(row)
-                        }
                     }
+                    else {
+                        if (row['country_iso'] == selectedCountry && row['relevance'] >= selectedRelevance) {
+                            if (selectedCategory == "All") {
+
+                                newData.push(row)
+
+
+                            }
+                            else if (row['category'] == selectedCategory) {
+                                newData.push(row)
+                            }
+                        }
 
 
 
+                    }
                 }
 
-            })
+                })
 
             //Order the sites by relevance in descending order
             newData.sort((a, b) => b.relevance - a.relevance)
@@ -381,11 +374,11 @@ function fromScatterplotToBarchartHoverOut(bar) {
     highlightRectangleOff(bar)
 }
 
-function fromStarplotToBarchartHoverIn(bar){
+function fromStarplotToBarchartHoverIn(bar) {
     highlightBarsOn(bar)
 }
 
-function fromStarplotToBarchartHoverOut(bar){
+function fromStarplotToBarchartHoverOut(bar) {
     highlightBarsOff(bar)
 }
 

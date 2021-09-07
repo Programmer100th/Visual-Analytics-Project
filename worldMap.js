@@ -42,7 +42,8 @@ function createColorLegend(countries) {
 
     var svg = document.getElementById('worldMap')
     const colorLegendG = d3.select(svg).append('g')
-        .attr('transform', 'translate(30,370)')
+    .attr('transform', 'translate('+ window.innerWidth / 40 + ',' + window.innerHeight / 7 * 2 + ')')
+        
         .attr('id', 'colorLegendWorldMap')
 
 

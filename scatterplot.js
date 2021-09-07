@@ -95,6 +95,8 @@ function visualizeData(data, width, height) {
         .attr('cy', d => yScale(yValue(d)))
         .attr('r', 5)
         .attr('class', 'scatterplotCircle')
+        .attr("stroke", "black")
+        .attr("stroke-width", "2px")
 
 
         /*

@@ -60,7 +60,7 @@ function singleCountryMapFirstTime() {
         .attr('id', 'colorLegendBase')
 
     const colorLegendG = d3.select('#colorLegendBase').append('g')
-        .attr('transform', 'translate(30,270)')
+        .attr('transform', 'translate('+ window.innerWidth / 40 + ',' + window.innerHeight / 5 + ')')        
         .attr('id', 'colorLegendSingleCountry');
 
 
