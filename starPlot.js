@@ -1,3 +1,9 @@
+import { fromStarplotToBarchartHoverIn }        from "./barChart.js";
+import { fromStarplotToBarchartHoverOut }       from "./barChart.js";
+import { fromStarplotToSingleCountryHoverIn }   from "./singleCountryMap.js"
+import { fromStarplotToSingleCountryHoverOut }  from "./singleCountryMap.js"
+import { fromStarplotToScatterplotHoverIn }     from "./scatterplot.js";
+import { fromStarplotToScatterplotHoverOut }    from "./scatterplot.js";
 
 var starPlot = {
     draw: function (id, d, options) {
@@ -72,7 +78,7 @@ var starPlot = {
           .attr("x", function (d) { return levelFactor * (1 - cfg.factor * Math.sin(0)); })
           .attr("y", function (d) { return levelFactor * (1 - cfg.factor * Math.cos(0)); })
           .attr("class", "")
-          .style("font-family", "Montserrat")
+          .style("font-family", "sans-serif")
           .style("font-size", "10px")
           .attr("transform", "translate(" + (cfg.w / 2 - levelFactor + cfg.ToRight) + ", " + (cfg.h / 2 - levelFactor) + ")")
           .attr("fill", "black")
@@ -102,14 +108,33 @@ var starPlot = {
       axis.append("text")
         .attr("class", "legend")
         .text(function (d) { return d })
-        .style("font-family", "Montserrat")
+        .style("font-family", "sans-serif")
         .style("font-size", "14px")
         .attr("text-anchor", "middle")
         .attr("dy", "1.5em")
         .attr("transform", function (d, i) { return "translate(-5, -20)" })
         .attr("x", function (d, i) { return cfg.w / 2 * (1 - cfg.factorLegend * Math.sin(i * cfg.radians / total)) - 60 * Math.sin(i * cfg.radians / total); })
-        .attr("y", function (d, i) { return cfg.h / 2 * (1 - Math.cos(i * cfg.radians / total)) - 20 * Math.cos(i * cfg.radians / total); });
-  
+        .attr("y", function (d, i) { return cfg.h / 2 * (1 - Math.cos(i * cfg.radians / total)) - 20 * Math.cos(i * cfg.radians / total); })
+
+        .on('mouseover', function (d) {
+          d3.select(this)
+            .style("fill", "green")
+            .style("cursor", "default")
+
+            fromStarplotToSingleCountryHoverIn(this.textContent)
+            fromStarplotToBarchartHoverIn(this.textContent)
+            fromStarplotToScatterplotHoverIn(this.textContent)
+        })
+      
+        .on('mouseout', function (d) {
+          d3.select(this)
+            .style("fill", "black")
+
+          fromStarplotToSingleCountryHoverOut(this.textContent)
+          fromStarplotToBarchartHoverOut()
+          fromStarplotToScatterplotHoverOut(this.textContent)
+        });
+
       let dataValues;
   
       d.forEach(function (y, x) {
@@ -436,6 +461,7 @@ var starPlot = {
       })
   
   
+    
     ////////////////////////////////////////////
     /////////// Initiate legend ////////////////
     ////////////////////////////////////////////
@@ -484,6 +510,7 @@ var starPlot = {
       .text(function (d) { return d; })
       ;*/
   }
+  
   
   export { myStarPlot }
   export { myStarPlotFirstTime }

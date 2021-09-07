@@ -5,8 +5,6 @@ import { fromBarchartToScatterplotHoverIn } from './scatterplot.js'
 import { fromBarchartToScatterplotHoverOut } from './scatterplot.js'
 
 
-
-
 function visualizeData(data, width, height) {
 
     const xValue = d => +d.relevance
@@ -339,19 +337,38 @@ function highlightRectangleOff(bar) {
 
 }
 
+function highlightBarsOn(bar) {
+    console.log(bar)
+    var myBarchart = document.getElementById('barchart')
+    var selectedBars = d3.select(myBarchart)
+        .selectAll(".barchartRects")
+        .filter(function (d) {
+            return d.category != bar
+        })
+        .transition()
+        .duration(1000)
+        .attr("opacity", 0.4)
 
+}
 
-function fromSingleCountryToBarchartHoverIn(bar) {
-    highlightRectangleOn(bar)
-
-
-
+function highlightBarsOff() {
+    var myBarchart = document.getElementById('barchart')
+    var selectedBars = d3.select(myBarchart)
+        .selectAll(".barchartRects")
+        .transition()
+        .duration(1000)
+        .attr("opacity", 1)
 
 }
 
 
-function fromSingleCountryToBarchartHoverOut(bar) {
 
+function fromSingleCountryToBarchartHoverIn(bar) {
+    highlightRectangleOn(bar)
+}
+
+
+function fromSingleCountryToBarchartHoverOut(bar) {
     highlightRectangleOff(bar)
 }
 
@@ -364,6 +381,13 @@ function fromScatterplotToBarchartHoverOut(bar) {
     highlightRectangleOff(bar)
 }
 
+function fromStarplotToBarchartHoverIn(bar){
+    highlightBarsOn(bar)
+}
+
+function fromStarplotToBarchartHoverOut(bar){
+    highlightBarsOff(bar)
+}
 
 
 
@@ -373,5 +397,5 @@ export { fromSingleCountryToBarchartHoverIn }
 export { fromSingleCountryToBarchartHoverOut }
 export { fromScatterplotToBarchartHoverIn }
 export { fromScatterplotToBarchartHoverOut }
-
-
+export { fromStarplotToBarchartHoverIn }
+export { fromStarplotToBarchartHoverOut }

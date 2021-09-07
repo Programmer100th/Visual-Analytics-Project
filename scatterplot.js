@@ -308,6 +308,34 @@ function makeCircleSmaller(point) {
 }
 
 
+function circlesIn(category) {
+    var scatterplotSvg = document.getElementById('myScatterplot')
+    var myDot = d3.select(scatterplotSvg)
+        .selectAll(".scatterplotCircle")
+        .filter(function (d) {
+            return d.category != category
+        })
+
+        .transition()
+        .duration(1000)
+        .attr('opacity', 0.02);
+
+}
+
+function circlesOut(category) {
+    var scatterplotSvg = document.getElementById('myScatterplot')
+    var myDot = d3.select(scatterplotSvg)
+        .selectAll(".scatterplotCircle")
+        .filter(function (d) {
+            return d.category != category
+        })
+
+        .transition()
+        .duration(1000)
+        .attr('opacity', 1);
+
+}
+
 
 
 function fromSingleCountryToScatterplotHoverIn(point) {
@@ -334,6 +362,13 @@ function fromBarchartToScatterplotHoverOut(point) {
 
 
 
+function fromStarplotToScatterplotHoverIn(category) {
+    circlesIn(category)
+}
+
+function fromStarplotToScatterplotHoverOut(category) {
+    circlesOut(category)
+}
 
 
 
@@ -575,6 +610,8 @@ export { fromSingleCountryToScatterplotHoverIn }
 export { fromSingleCountryToScatterplotHoverOut }
 export { fromBarchartToScatterplotHoverIn }
 export { fromBarchartToScatterplotHoverOut }
+export { fromStarplotToScatterplotHoverIn }
+export { fromStarplotToScatterplotHoverOut }
 
 
 

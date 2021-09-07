@@ -345,7 +345,6 @@ function makeCircleBigger(point) {
 
 }
 
-
 function makeCircleSmaller(point) {
 
     var singleCountryMapSvg = document.getElementById('mapSingleCountry')
@@ -359,6 +358,37 @@ function makeCircleSmaller(point) {
         .duration(1000)
         .attr('r', 10)
         .attr('stroke-width', "2px")
+
+}
+
+
+function circlesIn(category) {
+
+    var singleCountryMapSvg = document.getElementById('mapSingleCountry')
+    var myDot = d3.select(singleCountryMapSvg)
+        .selectAll(".sitesSingleCountry")
+        .filter(function (d) {
+            return d.category != category
+        })
+
+        //.transition()         // the computational time increases 
+        //.duration(1000)       
+        .attr('opacity', 0.0);  //0.05
+
+}
+
+function circlesOut(category) {
+
+    var singleCountryMapSvg = document.getElementById('mapSingleCountry')
+    var myDot = d3.select(singleCountryMapSvg)
+        .selectAll(".sitesSingleCountry")
+        .filter(function (d) {
+            return d.category != category
+        })
+
+        //.transition()
+        //.duration(1000)
+        .attr('opacity', 1);
 
 }
 
@@ -404,6 +434,16 @@ function fromScatterplotToSingleCountryHoverOut(point) {
 
 }
 
+function fromStarplotToSingleCountryHoverIn(category) {
+    circlesIn(category)
+
+}
+
+function fromStarplotToSingleCountryHoverOut(category) {
+    circlesOut(category)
+
+}
+
 
 export { singleCountryMap };
 export { singleCountryMapFirstTime }
@@ -412,3 +452,5 @@ export { fromBarchartToSingleCountryHoverOut }
 export { fromBarchartToSingleCountryClick }
 export { fromScatterplotToSingleCountryHoverIn }
 export { fromScatterplotToSingleCountryHoverOut }
+export { fromStarplotToSingleCountryHoverIn }
+export { fromStarplotToSingleCountryHoverOut }
