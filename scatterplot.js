@@ -12,7 +12,7 @@ function visualizeData(data, width, height) {
 
 
 
-    const margin = { top: 20, right: 20, bottom: 20, left: 80 };
+    const margin = { top: 25, right: 50, bottom: 25, left: 35 };
 
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
@@ -47,7 +47,7 @@ function visualizeData(data, width, height) {
         .domain(data.map(d => d.category))
         .range(['#543005', '#8c510a', '#bf812d', '#dfc27d', '#f6e8c3', '#c7eae5', '#80cdc1', '#35978f', '#01665e', '#003c30'])
 
-    console.log(categoryScale.domain())
+    
 
 
 
@@ -77,12 +77,10 @@ function visualizeData(data, width, height) {
 
     g.append('g').call(xAxis)
         .attr('transform', 'translate(' + 0 + ',' + innerHeight + ')')
-        .style("font-size", "15px");
+        .style("font-size", "1vw");
 
     g.append('g').call(yAxis)
-        .style("font-size", "15px");
-
-    console.log(data)
+        .style("font-size", "1vw");
 
 
     g.selectAll('.scatterplotCircle')
@@ -186,7 +184,7 @@ function myScatterplotFirstTime() {
     const svg = d3.select("#row2").append("svg")
         .attr("width", width)
         .attr("height", height)
-        .attr('class', 'flex_item_secondary')
+        .attr('class', 'col-sm flex_item_secondary')
         .attr('id', 'myScatterplot');
 
 
@@ -205,7 +203,7 @@ function myScatterplotFirstTime() {
             })
 
 
-            console.log(newData)
+        
 
             visualizeData(newData, width, height);
         });
@@ -221,7 +219,7 @@ function myScatterplotFirstTime() {
 
 
 
-function myScatterplot(selectedCountry, selectedCategory, selectedRelevance) {
+function myScatterplot(selectedCountry, selectedCategories, selectedRelevance) {
 
     const width = window.innerWidth / 3;
     const height = window.innerHeight / 7 * 3;
@@ -233,30 +231,21 @@ function myScatterplot(selectedCountry, selectedCategory, selectedRelevance) {
 
             var newData = []
 
+
+    
             data.filter(function (row) {
                 if (selectedCountry == null || selectedCountry == "World") {
-                    if (selectedCategory == "All" && row['relevance'] >= selectedRelevance) {
+                    if (row['relevance'] >= selectedRelevance && selectedCategories.includes(row['category'])) {
                         newData.push(row)
 
                     }
-                    else if (row['relevance'] >= selectedRelevance && row['category'] == selectedCategory) {
 
-                        newData.push(row)
-
-                    }
 
                 }
                 else {
-                    if (row['country_iso'] == selectedCountry && row['relevance'] >= selectedRelevance) {
-                        if (selectedCategory == "All") {
+                    if (row['country_iso'] == selectedCountry && row['relevance'] >= selectedRelevance && selectedCategories.includes(row['category'])) {
 
-                            newData.push(row)
-
-
-                        }
-                        else if (row['category'] == selectedCategory) {
-                            newData.push(row)
-                        }
+                        newData.push(row)
                     }
 
 
@@ -265,9 +254,6 @@ function myScatterplot(selectedCountry, selectedCategory, selectedRelevance) {
 
             })
 
-
-
-            console.log(newData)
 
             visualizeData(newData, width, height);
         });

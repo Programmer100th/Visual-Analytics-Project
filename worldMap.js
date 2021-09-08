@@ -12,11 +12,14 @@ let countries;
 
 function clickOnCountry(event, d) {
 
-    var categoryMenu = document.getElementById("categoryMenu");
-    var relevanceMenu = document.getElementById("relevanceMenu");
 
-    var currentCategory = categoryMenu.options[categoryMenu.selectedIndex].text;
-    var currentRelevance = relevanceMenu.options[relevanceMenu.selectedIndex].value;
+    var currentCategories = $('#categoryMenu').val();
+
+    if (currentCategories == null) {
+        currentCategories = []
+    }
+
+    var currentRelevance = document.getElementById('relevanceMenu').value
 
 
     //Dynamically set the value of the dropdown menu
@@ -29,10 +32,14 @@ function clickOnCountry(event, d) {
         }
     }
 
-    singleCountryMap(d.properties.ISO_A2, currentCategory, currentRelevance, true)
-    myBarChart(d.properties.ISO_A2, currentCategory, currentRelevance)
+
+    //Needed otherwise the selected element is not updated
+    $('#countryMenu').selectpicker('refresh');
+
+    singleCountryMap(d.properties.ISO_A2, currentCategories, currentRelevance, true)
+    myBarChart(d.properties.ISO_A2, currentCategories, currentRelevance)
     myStarPlot(d.properties.ISO_A2)
-    myScatterplot(d.properties.ISO_A2, currentCategory, currentRelevance)
+    myScatterplot(d.properties.ISO_A2, currentCategories, currentRelevance)
 
 
 }
@@ -42,8 +49,8 @@ function createColorLegend(countries) {
 
     var svg = document.getElementById('worldMap')
     const colorLegendG = d3.select(svg).append('g')
-    .attr('transform', 'translate('+ window.innerWidth / 40 + ',' + window.innerHeight / 7 * 2 + ')')
-        
+        .attr('transform', 'translate(' + window.innerWidth / 40 + ',' + window.innerHeight / 4 + ')')
+
         .attr('id', 'colorLegendWorldMap')
 
 
@@ -109,16 +116,16 @@ function createColorLegend(countries) {
 
     //colorScale.domain([0, 100, 1000, 10000, d3.max(countries.features, d => d.properties.sites_number)])
     //colorScale.range(['#feedde', '#fdbe85', '#fd8d3c', '#d94701'])
-    console.log("ColorScale domain", colorScale.domain())
+
 
 
     colorLegendG
         .call(colorLegend, {
             colorScale: colorScale,
             circleRadius: 5,
-            spacing: 20,
+            spacing: 15,
             textOffset: 10,
-            backgroundRectWidth: 75
+            backgroundRectWidth: "5vw"
         });
 
     return colorScale;
@@ -171,7 +178,7 @@ function worldMapFirstTime() {
     var svg = d3.select("#row1").append("svg")
         .attr("width", width)
         .attr("height", height)
-        .attr("class", "map flex_item_primary")
+        .attr("class", "map col-sm-6 remove-all-margin flex_item_primary")
         .attr('id', "worldMap")
 
 
@@ -260,9 +267,9 @@ function worldMapFirstTime() {
 }
 
 
-function worldMap(selectedCategory, selectedRelevance) {
+function worldMap(selectedCategories, selectedRelevance) {
 
-    console.log("Attuali in World Map:", selectedCategory, selectedRelevance)
+    console.log("Attuali in World Map:", selectedCategories, selectedRelevance)
 
     selectedRelevance = parseInt(selectedRelevance)
 
@@ -292,30 +299,19 @@ function worldMap(selectedCategory, selectedRelevance) {
 
             csvData.filter(function (row) {
 
-                if (selectedCategory == "All") {
-                    if (selectedRelevance == 0) {
-                        updatedCsvData.push(row)
-                    }
-                    else {
-                        if (row['relevance'] >= selectedRelevance) {
-                            updatedCsvData.push(row)
-                        }
-                    }
+                if (row['relevance'] == "") {
+                    row['relevance'] = 0;
                 }
-                else {
-                    if (selectedRelevance == 0) {
-                        if (row['category'] == selectedCategory) {
-                            updatedCsvData.push(row)
-                        }
-                    }
-                    else {
-                        if (row['relevance'] >= selectedRelevance && row['category'] == selectedCategory) {
-                            updatedCsvData.push(row)
-                        }
-                    }
+
+                if (selectedCategories.includes(row['category']) && row['relevance'] >= selectedRelevance) {
+                    updatedCsvData.push(row)
 
                 }
+
+
             });
+
+
 
 
             const sitesPerCountryMap = d3.rollup(updatedCsvData, v => v.length, d => d.country_iso);

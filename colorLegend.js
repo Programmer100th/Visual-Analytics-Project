@@ -17,7 +17,7 @@ const colorLegend = (selection, props) => {
         .attr('y', -circleRadius * 2)
         .attr('rx', circleRadius * 2)
         .attr('width', backgroundRectWidth)
-        .attr('height', spacing * n)
+        .attr('height', spacing * n + 5)
         .attr('fill', 'white')
         .attr('opacity', 0.9);
 
@@ -47,7 +47,7 @@ const colorLegend = (selection, props) => {
         .text(d => d)
         .attr('dy', '0.32em')
         .attr('x', textOffset)
-        .style("font-size", "17px");
+        .style("font-size", "1vw");
 }
 
 export { colorLegend };

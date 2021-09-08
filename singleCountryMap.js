@@ -9,13 +9,159 @@ let map;
 let geocoder;
 
 
+function createGeoJsonFile(data) {
+    var sites_geojson = {
+        "name": "NewFeatureType",
+        "type": "FeatureCollection",
+        "features": []
+    };
+
+    data.forEach(row => {
+        var obj = {}
+        var geometry = {}
+        var properties = {}
+        geometry['type'] = "Point"
+        geometry['coordinates'] = [row['longitude'], row['latitude']]
+
+        properties['name'] = row['name']
+        properties['country'] = row['country']
+        properties['category'] = row['category']
+        properties['country_iso'] = row['country_iso']
+        if(row['relevance'] == "")
+        {
+            properties['relevance'] = 0
+        }
+        else
+        {
+            properties['relevance'] = parseInt(row['relevance'])
+        }
+
+        obj['type'] = "Feature"
+        obj['geometry'] = geometry
+        obj['properties'] = properties
+
+
+        sites_geojson.features.push(obj)
+
+    })
+
+
+    return sites_geojson;
+
+}
+
+
+
+function addHeatMapLayer(sites_geojson) {
+
+
+    map.addSource('sites_distribution', {
+        type: 'geojson',
+        data: sites_geojson
+    })
+
+
+
+
+    map.addLayer(
+        {
+            id: 'heatmapLayer',
+            type: 'heatmap',
+            source: 'sites_distribution',
+            maxzoom: 15,
+            paint: {
+                // increase weight as diameter breast height increases
+                'heatmap-weight': {
+                    property: 'relevance',
+                    type: 'exponential',
+                    stops: [
+                        [0, 0.1],
+                        [300, 1]
+                    ]
+                },
+                // increase intensity as zoom level increases
+                'heatmap-intensity': {
+                    stops: [
+                        [11, 1],
+                        [15, 3]
+                    ]
+                },
+                // assign color values be applied to points depending on their density
+                'heatmap-color': [
+                    'interpolate',
+                    ['linear'],
+                    ['heatmap-density'],
+                    0,
+                    'rgba(236,222,239,0)',
+                    0.2,
+                    'rgb(208,209,230)',
+                    0.4,
+                    'rgb(166,189,219)',
+                    0.6,
+                    'rgb(103,169,207)',
+                    0.8,
+                    'rgb(28,144,153)'
+                ],
+                // increase radius as zoom increases
+                'heatmap-radius': {
+                    stops: [
+                        [11, 15],
+                        [15, 20]
+                    ]
+                },
+                // decrease opacity to transition into the circle layer
+                'heatmap-opacity': {
+                    default: 1,
+                    stops: [
+                        [14, 1],
+                        [15, 0]
+                    ]
+                }
+            }
+        },
+        'waterway-label'
+    );
+
+
+
+    // add heatmap layer here
+    // add circle layer here
+
+
+}
+
+
+function handleZoom(data, pointsAreOnMap) {
+    map.on('zoom', () => {
+        var currentZoom = map.getZoom();
+
+        if (currentZoom > 10 && pointsAreOnMap == false) {
+            d3.selectAll(".sitesSingleCountry").exit()
+            d3.selectAll(".sitesSingleCountry").remove()
+            pointsAreOnMap = true
+            putPointsOnMap(data)
+
+        }
+        else if (currentZoom <= 10 && pointsAreOnMap == true)
+        {
+            d3.selectAll(".sitesSingleCountry").exit()
+            d3.selectAll(".sitesSingleCountry").remove()
+            pointsAreOnMap = false
+
+        }
+
+    })
+
+}
+
 
 function singleCountryMapFirstTime() {
 
 
+
     var mapDiv = document.createElement("div");
     mapDiv.id = "map";
-    mapDiv.class = "flex_item_primary";
+    mapDiv.class = "col-sm-6 flex_item_primary";
 
     document.getElementById("row1").appendChild(mapDiv);
 
@@ -26,6 +172,7 @@ function singleCountryMapFirstTime() {
         style: 'mapbox://styles/mapbox/streets-v11', // style URL
         center: [12.75, 41.0], // starting position [lng, lat]
         zoom: 2 // starting zoom
+
 
     });
 
@@ -45,6 +192,10 @@ function singleCountryMapFirstTime() {
     geocoder.query("IT");
 
 
+
+
+
+
     var container = map.getCanvasContainer();
     var svg = d3
         .select(container)
@@ -60,8 +211,11 @@ function singleCountryMapFirstTime() {
         .attr('id', 'colorLegendBase')
 
     const colorLegendG = d3.select('#colorLegendBase').append('g')
-        .attr('transform', 'translate('+ window.innerWidth / 40 + ',' + window.innerHeight / 5 + ')')        
+        .attr('transform', 'translate(' + window.innerWidth / 40 + ',' + window.innerHeight / 6 + ')')
         .attr('id', 'colorLegendSingleCountry');
+
+
+
 
 
     d3.tsv("./data_files/geoviewsnew_2.tsv")
@@ -82,7 +236,24 @@ function singleCountryMapFirstTime() {
             })
 
 
-            putPointsOnMap(newData)
+            
+
+
+            var sites_geojson = createGeoJsonFile(newData);
+
+            map.on('load', () => {
+
+                addHeatMapLayer(sites_geojson);
+            });
+
+            handleZoom(newData, false);
+
+            
+
+
+
+
+            //putPointsOnMap(newData)
 
 
 
@@ -95,7 +266,9 @@ function singleCountryMapFirstTime() {
 
 
 
-function singleCountryMap(country_iso_code, selectedCategory, selectedRelevance, changeCountry) {
+function singleCountryMap(country_iso_code, selectedCategories, selectedRelevance, changeCountry) {
+
+    console.log("Attuali in SingleCountryMap:", country_iso_code, selectedCategories, selectedRelevance)
 
 
 
@@ -107,52 +280,44 @@ function singleCountryMap(country_iso_code, selectedCategory, selectedRelevance,
                 var newData = []
 
 
+
+
+
                 data.filter(function (row) {
 
-
-                    if (selectedCategory == "All") {
-
-                        if (selectedRelevance == 0) {
-
-
-                            if (row['country_iso'] == country_iso_code) {
-
-                                newData.push(row)
-                            }
-                        }
-                        else {
-                            if (row['country_iso'] == country_iso_code && row['relevance'] >= selectedRelevance) {
-
-                                newData.push(row)
-                            }
-
-                        }
+                    if(row['relevance'] == "")
+                    {
+                        row['relevance'] = 0;
                     }
-                    else {
-                        if (selectedRelevance == 0) {
 
 
-                            if (row['country_iso'] == country_iso_code && row['category'] == selectedCategory) {
 
-                                newData.push(row)
-                            }
-                        }
-                        else {
-                            if (row['country_iso'] == country_iso_code && row['relevance'] >= selectedRelevance && row['category'] == selectedCategory) {
-
-                                newData.push(row)
-                            }
-
-                        }
-
+                    if(selectedCategories.includes(row['category']) && row['relevance'] >= selectedRelevance && row['country_iso'] == country_iso_code)
+                    {
+                        newData.push(row)
+                        
                     }
+                   
+
+                    
                 });
 
 
-                console.log(newData)
+                
+
+                map.removeLayer('heatmapLayer')
+                map.removeSource('sites_distribution');
+
+                var sites_geojson = createGeoJsonFile(newData);
+
+                addHeatMapLayer(sites_geojson);
+
+                handleZoom(newData, false);
+
+                
 
 
-                putPointsOnMap(newData)
+                //putPointsOnMap(newData)
 
 
 
@@ -200,13 +365,14 @@ function putPointsOnMap(newData) {
 
     var dots = d3.select(singleCountryMapSvg)
         .selectAll(".sitesSingleCountry")
+        .exit()
         .data(newData)
         .enter()
         .append("circle")
         .attr('class', 'sitesSingleCountry')
-        .attr("r", 10)
+        .attr("r", 5)
         .attr("stroke", "black")
-        .attr("stroke-width", "2px")
+        .attr("stroke-width", "1px")
 
 
         .attr("fill", function (d) {
@@ -222,7 +388,7 @@ function putPointsOnMap(newData) {
 
 
 
- 
+
 
     map.on("viewreset", render);
     map.on("move", render);
@@ -242,7 +408,7 @@ function putPointsOnMap(newData) {
 
 
 
-  
+
 
     const colorLegendG = document.getElementById('colorLegendSingleCountry');
 
@@ -252,9 +418,9 @@ function putPointsOnMap(newData) {
         .call(colorLegend, {
             colorScale: categoryScale,
             circleRadius: 5,
-            spacing: 25,
+            spacing: 15,
             textOffset: 10,
-            backgroundRectWidth: 200,
+            backgroundRectWidth: "12vw",
         });
 
 }
@@ -315,8 +481,8 @@ function mouseOut(event, d) {
 
         .transition()
         .duration(1000)
-        .attr('r', 10)
-        .attr('stroke-width', "2px");
+        .attr('r', 5)
+        .attr('stroke-width', "1px");
 
 
 
@@ -356,8 +522,8 @@ function makeCircleSmaller(point) {
 
         .transition()
         .duration(1000)
-        .attr('r', 10)
-        .attr('stroke-width', "2px")
+        .attr('r', 5)
+        .attr('stroke-width', "1px")
 
 }
 

@@ -1,27 +1,46 @@
+.remove-all-margin{
+margin: 0% !important;
+padding: 0% !important;
+}
+
+
+.vertical-center {
+ 
+    margin-top: 1%;
+ 
+  }
+
+
 .header {
     display: flex;
-    margin-bottom: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
    
 }
   
 
 .headerSubMenu {
-    margin-right: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
     float:left; 
 }
 
 
 .flex-container {
     
-    display: flex;
-    flex-direction: column;
+    display: flex !important;
+    flex-direction: column !important;
+    margin-left: 3%;
 }
 
+/*Put this on if use flexbox
 
 .container {
-    display: flex;
+    display: flex !important;
     
 }
+
+*/
 
 .flex_item_primary {
     flex-grow: 2;
@@ -34,7 +53,8 @@
 
 .map
 {
-    background:lightblue
+    /*background:lightblue*/
+    background: #92D7EA;
 }
 
 .country 
@@ -84,20 +104,10 @@
     cursor: default;
 }
 
-
-.tick text {
-    fill: black;
-    font-family: sans-serif;
-    font-size: 1vw;
-}
-
 .tick circle {
     stroke: black;
     stroke-opacity: 0.5;
 }
-
-
-
 
 
 
@@ -116,7 +126,7 @@ svg
 select
 {
     /*font-size: 20px;*/
-    font-size: 1.3vw;
+    font-size: 1.1vw;
 }
 
 
@@ -139,7 +149,7 @@ select
 
 
 
-/* Scatterplot PCA */
+/* Scatterplot PCA done by prof */
 
 .background path {
     fill: none;
@@ -171,4 +181,9 @@ select
     cursor: move;
   }
 
+
+
+
+
+  /*Checkbox inside dropdown for category menu */
 

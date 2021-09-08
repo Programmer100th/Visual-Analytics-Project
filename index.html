@@ -27,11 +27,21 @@
 
 
 
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
+
+
+
+
+
 </head>
 
 <body>
 
-    
 
 
 
@@ -39,6 +49,9 @@
 
 
 
+
+
+    <!----
     <div class="flex-container">
 
         <div class="container" id="row0">
@@ -46,18 +59,30 @@
             <div class="header flex_item_secondary" id="myHeader">
 
                 <div class="headerSubMenu" id="divCountryMenu">
-        
+
+                    
+                    <select class="selectpicker" id="countryMenu" data-live-search="true">
+                    </select>
+
+                    
+
                 </div>
-        
-        
+
+
                 <div class="headerSubMenu" id=divCategoryMenu>
-        
+
+
+                    <select class="selectpicker" id="categoryMenu" multiple title="Choose categories">
+                    </select>
+
+
+
                 </div>
-        
+
                 <div class="headerSubMenu" id="divRelevanceMenu">
-        
+
                 </div>
-        
+
             </div>
 
 
@@ -69,6 +94,64 @@
 
 
         <div class="container" id="row2"></div>
+    </div>
+
+
+    --->
+
+
+
+
+    <div class="container-fluid">
+
+        <div class="row" id="row0">
+
+            
+
+            <div class="header flex_item_secondary" id="myHeader">
+
+                <div class="headerSubMenu" id="divCountryMenu">
+
+                    <label>Country: </label>
+                    <select class="selectpicker" id="countryMenu" data-live-search="true">
+                    </select>
+
+
+
+                </div>
+
+
+                <div class="headerSubMenu" id=divCategoryMenu>
+
+                    <label>Category: </label>
+                    <select class="selectpicker" id="categoryMenu" multiple title="Choose categories" data-actions-box='true'>
+                    </select>
+
+
+
+                </div>
+
+                <div class="headerSubMenu vertical-center" id="divRelevanceMenu">
+                    <label>Min Relevance: </label>
+                    <input type="range" id="relevanceMenu" name="rangeInput" step="1" min="0" max="1000" value="0">
+                    <label id="sliderLabel">0</label>
+
+                </div>
+
+
+
+
+            </div>
+
+
+        </div>
+
+
+        <div class="row" id="row1">
+        </div>
+
+
+        <div class="row" id="row2"></div>
     </div>
 
 

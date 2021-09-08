@@ -29,7 +29,7 @@ function visualizeData(data, width, height) {
 
 
     //Play with margin left for words in vertical axis
-    const margin = { top: 20, right: 20, bottom: 30, left: 150 };
+    const margin = { top: 25, right: 20, bottom: 25, left: 120 };
 
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
@@ -72,14 +72,14 @@ function visualizeData(data, width, height) {
     g.append('g').call(xAxis)
         .attr('transform', 'translate(' + 0 + ',' + innerHeight + ')')
 
-        .style("font-size", "15px");
+        .style("font-size", "1vw");
 
     g.append('g').call(yAxis)
 
-        .style("font-size", "15px");
+        .style("font-size", "1vw");
 
 
-    console.log(yScale.domain().length)
+   
 
 
 
@@ -148,14 +148,14 @@ function visualizeData(data, width, height) {
     function mouseOver(event, d) {
         console.log(d)
 
-       
+
 
 
         d3.select(this)
             .transition()
             .duration(500)
             .style("fill", "green")
-          
+
 
 
 
@@ -212,7 +212,7 @@ function myBarChartFirstTime() {
     const svg = d3.select("#row2").append("svg")
         .attr("width", width)
         .attr("height", height)
-        .attr("class", "flex_item_secondary")
+        .attr("class", "col-sm flex_item_secondary")
         .attr('id', "barchart")
 
     d3.tsv("./data_files/geoviewsnew_2.tsv")
@@ -242,9 +242,10 @@ function myBarChartFirstTime() {
 
 }
 
-function myBarChart(selectedCountry, selectedCategory, selectedRelevance) {
+function myBarChart(selectedCountry, selectedCategories, selectedRelevance) {
 
-    console.log("Attuali in barchart:", selectedCountry, selectedCategory, selectedRelevance)
+
+    console.log("Attuali in barchart:", selectedCountry, selectedCategories, selectedRelevance)
 
     selectedRelevance = parseInt(selectedRelevance)
 
@@ -255,31 +256,26 @@ function myBarChart(selectedCountry, selectedCategory, selectedRelevance) {
         .then(data => {
             var newData = []
 
+
+
+
             data.filter(function (row) {
                 if (row['relevance'] != "") {
                     if (selectedCountry == null || selectedCountry == "World") {
-                        if (selectedCategory == "All" && row['relevance'] >= selectedRelevance) {
+                        if (selectedCategories.includes(row['category']) && row['relevance'] >= selectedRelevance) {
                             newData.push(row)
 
                         }
-                        else if (row['relevance'] >= selectedRelevance && row['category'] == selectedCategory) {
 
-                            newData.push(row)
-
-                        }
 
                     }
                     else {
-                        if (row['country_iso'] == selectedCountry && row['relevance'] >= selectedRelevance) {
-                            if (selectedCategory == "All") {
-
-                                newData.push(row)
+                        if (row['country_iso'] == selectedCountry && row['relevance'] >= selectedRelevance && selectedCategories.includes(row['category'])) {
 
 
-                            }
-                            else if (row['category'] == selectedCategory) {
-                                newData.push(row)
-                            }
+                            newData.push(row)
+
+
                         }
 
 
@@ -287,7 +283,7 @@ function myBarChart(selectedCountry, selectedCategory, selectedRelevance) {
                     }
                 }
 
-                })
+            })
 
             //Order the sites by relevance in descending order
             newData.sort((a, b) => b.relevance - a.relevance)
