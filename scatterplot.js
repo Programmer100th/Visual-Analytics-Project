@@ -1,8 +1,9 @@
-import { fromScatterplotToSingleCountryHoverIn } from './singleCountryMap.js'
-import { fromScatterplotToSingleCountryHoverOut } from './singleCountryMap.js'
-import { fromScatterplotToBarchartHoverIn } from './barChart.js'
-import { fromScatterplotToBarchartHoverOut } from './barChart.js'
-
+import { fromScatterplotToSingleCountryHoverIn }    from './singleCountryMap.js'
+import { fromScatterplotToSingleCountryHoverOut }   from './singleCountryMap.js'
+import { fromScatterplotToBarchartHoverIn }         from './barChart.js'
+import { fromScatterplotToBarchartHoverOut }        from './barChart.js'
+import { changeStarplotIn }                         from './starPlot.js'
+import { changeStarplotOut }                        from './starPlot.js'
 
 function visualizeData(data, width, height) {
 
@@ -83,7 +84,6 @@ function visualizeData(data, width, height) {
     g.append('g').call(yAxis)
         .style("font-size", "1vw");
 
-
     g.selectAll('.scatterplotCircle')
         .data(data)
         .enter()
@@ -151,13 +151,7 @@ function mouseOver(event, d) {
         })
 
 
-    var labels = document.getElementsByClassName("legend")
-    d3.selectAll(labels)
-        .transition()
-        .duration(200)
-        .style("fill", function () { if (d.category == this.textContent) return "green" })
-
-
+    changeStarplotIn(d.category)
     fromScatterplotToSingleCountryHoverIn(d)
     fromScatterplotToBarchartHoverIn(d)
 }
@@ -172,14 +166,7 @@ function mouseOut(event, d) {
         .attr('stroke-width', "1px");
 
 
-    var labels = document.getElementsByClassName("legend")
-    d3.selectAll(labels)
-        .transition()
-        .duration(200)
-        .style("fill", "black")
-
-
-
+    changeStarplotOut()
     fromScatterplotToSingleCountryHoverOut(d)
     fromScatterplotToBarchartHoverOut(d)
 
@@ -411,13 +398,6 @@ function fromStarplotToScatterplotHoverIn(category) {
 function fromStarplotToScatterplotHoverOut(category) {
     circlesOut(category)
 }
-
-
-
-
-
-
-
 
 
 

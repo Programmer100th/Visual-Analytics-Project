@@ -1,8 +1,11 @@
-import { colorLegend } from './colorLegend.js'
-import { fromSingleCountryToBarchartHoverIn } from './barChart.js'
-import { fromSingleCountryToBarchartHoverOut } from './barChart.js'
-import { fromSingleCountryToScatterplotHoverIn } from './scatterplot.js'
-import { fromSingleCountryToScatterplotHoverOut } from './scatterplot.js'
+import { colorLegend }                              from './colorLegend.js'
+import { fromSingleCountryToBarchartHoverIn }       from './barChart.js'
+import { fromSingleCountryToBarchartHoverOut }      from './barChart.js'
+import { fromSingleCountryToScatterplotHoverIn }    from './scatterplot.js'
+import { fromSingleCountryToScatterplotHoverOut }   from './scatterplot.js'
+import { changeStarplotIn }                         from './starPlot.js'
+import { changeStarplotOut }                        from './starPlot.js'
+
 
 let map;
 let geocoder;
@@ -218,6 +221,8 @@ function singleCountryMapFirstTime() {
 
 
     });
+
+    map.addControl(new mapboxgl.NavigationControl());
 
 
     geocoder = new MapboxGeocoder({ // Initialize the geocoder
@@ -533,13 +538,7 @@ function mouseOver(event, d) {
         })
 
 
-    var labels = document.getElementsByClassName("legend")
-    d3.selectAll(labels)
-        .transition()
-        .duration(200)
-        .style("fill", function () { if (d.category == this.textContent) return "green" })
-
-
+    changeStarplotIn(d.category)
     fromSingleCountryToBarchartHoverIn(d);
     fromSingleCountryToScatterplotHoverIn(d);
 
@@ -549,21 +548,13 @@ function mouseOver(event, d) {
 function mouseOut(event, d) {
 
     d3.select(this)
-
-
-
         .transition()
         .duration(1000)
         .attr('r', 5)
         .attr('stroke-width', "1px");
 
-    var labels = document.getElementsByClassName("legend")
-    d3.selectAll(labels)
-        .transition()
-        .duration(200)
-        .style("fill", "black")
 
-
+    changeStarplotOut()
     fromSingleCountryToBarchartHoverOut(d);
     fromSingleCountryToScatterplotHoverOut(d)
 
@@ -579,8 +570,6 @@ function makeCircleBigger(point) {
         .filter(function (d) {
             return d.name == point.name
         })
-
-
 
         .attr('stroke-width', 5)
         .transition()

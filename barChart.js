@@ -1,8 +1,10 @@
-import { fromBarchartToSingleCountryHoverIn } from './singleCountryMap.js'
-import { fromBarchartToSingleCountryHoverOut } from './singleCountryMap.js'
-import { fromBarchartToSingleCountryClick } from './singleCountryMap.js'
-import { fromBarchartToScatterplotHoverIn } from './scatterplot.js'
-import { fromBarchartToScatterplotHoverOut } from './scatterplot.js'
+import { fromBarchartToSingleCountryHoverIn }   from './singleCountryMap.js'
+import { fromBarchartToSingleCountryHoverOut }  from './singleCountryMap.js'
+import { fromBarchartToSingleCountryClick }     from './singleCountryMap.js'
+import { fromBarchartToScatterplotHoverIn }     from './scatterplot.js'
+import { fromBarchartToScatterplotHoverOut }    from './scatterplot.js'
+import { changeStarplotIn }                     from './starPlot.js'
+import { changeStarplotOut }                    from './starPlot.js'
 
 
 function visualizeData(data, width, height) {
@@ -62,14 +64,14 @@ function visualizeData(data, width, height) {
         .attr('id', 'barchartG');
 
 
-
-
     var xAxisLabel = g.append("text")
         .attr("class", "x_label")
         //.attr("text-anchor", "end")
         .attr("x", 0)
         .attr("y", height - 35)
+        .style("fill", "black")
         .text("Relevance");
+        
 
 
         /*
@@ -175,14 +177,7 @@ function visualizeData(data, width, height) {
             })
 
 
-        var labels = document.getElementsByClassName("legend")
-        d3.selectAll(labels)
-            .transition()
-            .duration(200)
-            .style("fill", function () { if (d.category == this.textContent) return "green" })
-
-
-
+        changeStarplotIn(d.category)
         fromBarchartToSingleCountryHoverIn(d)
         fromBarchartToScatterplotHoverIn(d)
     }
@@ -197,14 +192,7 @@ function visualizeData(data, width, height) {
             .style('fill', "steelblue")
 
 
-        var labels = document.getElementsByClassName("legend")
-        d3.selectAll(labels)
-            .transition()
-            .duration(200)
-            .style("fill", "black")
-
-
-
+        changeStarplotOut()
         fromBarchartToSingleCountryHoverOut(d)
         fromBarchartToScatterplotHoverOut(d)
     }
