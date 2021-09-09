@@ -1,7 +1,7 @@
-import { fromScatterplotToSingleCountryHoverIn }    from './singleCountryMap.js'
-import { fromScatterplotToSingleCountryHoverOut }   from './singleCountryMap.js'
-import { fromScatterplotToBarchartHoverIn }         from './barChart.js'
-import { fromScatterplotToBarchartHoverOut }        from './barChart.js'
+import { fromScatterplotToSingleCountryHoverIn } from './singleCountryMap.js'
+import { fromScatterplotToSingleCountryHoverOut } from './singleCountryMap.js'
+import { fromScatterplotToBarchartHoverIn } from './barChart.js'
+import { fromScatterplotToBarchartHoverOut } from './barChart.js'
 
 
 function visualizeData(data, width, height) {
@@ -148,7 +148,7 @@ function mouseOver(event, d) {
     d3.selectAll(labels)
         .transition()
         .duration(200)
-        .style("fill", function() { if(d.category == this.textContent) return "green" })
+        .style("fill", function () { if (d.category == this.textContent) return "green" })
 
 
     fromScatterplotToSingleCountryHoverIn(d)
@@ -194,6 +194,19 @@ function myScatterplotFirstTime() {
         .attr('class', 'col-sm flex_item_secondary')
         .attr('id', 'myScatterplot');
 
+    var noDataText = svg.append("text")
+
+        .attr('id', 'noDataAvailableScatterplot')
+        .attr("y", '50%')
+        .attr('x', '50%')
+        .attr('text-anchor', "middle")
+        .style('display', 'none')
+        .text("No data available");
+
+
+
+
+
 
 
 
@@ -210,7 +223,7 @@ function myScatterplotFirstTime() {
             })
 
 
-        
+
 
             visualizeData(newData, width, height);
         });
@@ -239,7 +252,7 @@ function myScatterplot(selectedCountry, selectedCategories, selectedRelevance) {
             var newData = []
 
 
-    
+
             data.filter(function (row) {
                 if (selectedCountry == null || selectedCountry == "World") {
                     if (row['relevance'] >= selectedRelevance && selectedCategories.includes(row['category'])) {
@@ -262,7 +275,34 @@ function myScatterplot(selectedCountry, selectedCategories, selectedRelevance) {
             })
 
 
-            visualizeData(newData, width, height);
+
+            if (newData.length == 0) {
+
+
+                var scatterplotG = document.getElementById('scatterplotG')
+                scatterplotG.style.display = 'none';
+
+                var noDataText = document.getElementById('noDataAvailableScatterplot')
+                noDataText.style.display = 'block';
+
+            }
+
+            else {
+
+
+                var noDataText = document.getElementById('noDataAvailableScatterplot')
+                noDataText.style.display = 'none';
+
+
+                var scatterplotG = document.getElementById('scatterplotG')
+                scatterplotG.style.display = 'block';
+
+
+                visualizeData(newData, width, height);
+            }
+
+
+        
         });
 
 }

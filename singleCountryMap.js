@@ -6,6 +6,7 @@ import { fromSingleCountryToScatterplotHoverOut }   from './scatterplot.js'
 
 let map;
 let geocoder;
+let currentTsvData = []
 
 function createGeoJsonFile(data) {
     var sites_geojson = {
@@ -47,7 +48,11 @@ function createGeoJsonFile(data) {
 }
 
 
-function addHeatMapLayer(sites_geojson) {
+function addHeatMapLayer(sites_geojson, tresholdZoom) {
+
+
+    var num_sites = sites_geojson.features.length
+    console.log(num_sites)
 
 
     map.addSource('sites_distribution', {
@@ -55,27 +60,31 @@ function addHeatMapLayer(sites_geojson) {
         data: sites_geojson
     })
 
+
+
+
     map.addLayer(
         {
             id: 'heatmapLayer',
             type: 'heatmap',
             source: 'sites_distribution',
-            maxzoom: 15,
+            maxzoom: tresholdZoom,
             paint: {
                 // increase weight as diameter breast height increases
                 'heatmap-weight': {
                     property: 'relevance',
                     type: 'exponential',
                     stops: [
-                        [0, 0.1],
+                        [0, 0.3],
                         [300, 1]
                     ]
                 },
                 // increase intensity as zoom level increases
                 'heatmap-intensity': {
                     stops: [
-                        [11, 1],
-                        [15, 3]
+                        [0, Math.ceil(100 / num_sites)],
+                        [3, 1],
+                        [tresholdZoom, 5]
                     ]
                 },
                 // assign color values be applied to points depending on their density
@@ -85,28 +94,37 @@ function addHeatMapLayer(sites_geojson) {
                     ['heatmap-density'],
                     0,
                     'rgba(236,222,239,0)',
+                    //'#feedde',
                     0.2,
-                    'rgb(208,209,230)',
+                    //'rgb(208,209,230)',
+                    '#feedde',
+
                     0.4,
-                    'rgb(166,189,219)',
+                    //'rgb(166,189,219)',
+                    '#fdbe85',
+
                     0.6,
-                    'rgb(103,169,207)',
+                    //'rgb(103,169,207)',
+                    '#fd8d3c',
+
                     0.8,
-                    'rgb(28,144,153)'
+                    //'rgb(28,144,153)'
+                    '#e6550d'
+
                 ],
                 // increase radius as zoom increases
                 'heatmap-radius': {
                     stops: [
-                        [11, 15],
-                        [15, 20]
+                        [0, Math.ceil(500 / num_sites)],
+                        [tresholdZoom, 15]
                     ]
                 },
                 // decrease opacity to transition into the circle layer
                 'heatmap-opacity': {
                     default: 1,
                     stops: [
-                        [14, 1],
-                        [15, 0]
+                        [tresholdZoom - 1, 1],
+                        [tresholdZoom, 0.3]
                     ]
                 }
             }
@@ -115,30 +133,47 @@ function addHeatMapLayer(sites_geojson) {
     );
 
 
+
     // add heatmap layer here
     // add circle layer here
+
+   
 
 }
 
 
-function handleZoom(data, pointsAreOnMap) {
+function handleZoom(data, pointsAreOnMap, tresholdZoom) {
+
+
+
     map.on('zoom', () => {
-        var currentZoom = map.getZoom();
 
-        if (currentZoom > 10 && pointsAreOnMap == false) {
-            d3.selectAll(".sitesSingleCountry").exit()
-            d3.selectAll(".sitesSingleCountry").remove()
-            pointsAreOnMap = true
-            putPointsOnMap(data)
+        
 
+        if (currentTsvData.length > 100) {
+
+           
+            var currentZoom = map.getZoom();
+
+            if (currentZoom > tresholdZoom && pointsAreOnMap == false) {
+                d3.selectAll(".sitesSingleCountry").exit()
+                d3.selectAll(".sitesSingleCountry").remove()
+                pointsAreOnMap = true
+                putPointsOnMap(currentTsvData)
+
+            }
+            else if (currentZoom <= tresholdZoom && pointsAreOnMap == true) {
+                d3.selectAll(".sitesSingleCountry").exit()
+                d3.selectAll(".sitesSingleCountry").remove()
+                pointsAreOnMap = false
+
+
+            }
         }
-        else if (currentZoom <= 10 && pointsAreOnMap == true)
-        {
-            d3.selectAll(".sitesSingleCountry").exit()
-            d3.selectAll(".sitesSingleCountry").remove()
-            pointsAreOnMap = false
 
-        }
+
+
+   
 
     })
 
@@ -218,17 +253,25 @@ function singleCountryMapFirstTime() {
             })
 
 
+
+            currentTsvData = newData;
+
+
+
+            var tresholdZoom = 10;
+
             var sites_geojson = createGeoJsonFile(newData);
 
             map.on('load', () => {
 
-                addHeatMapLayer(sites_geojson);
+                addHeatMapLayer(sites_geojson, tresholdZoom);
             });
 
-            handleZoom(newData, false);
+            handleZoom(newData, false, tresholdZoom);
 
 
-            //putPointsOnMap(newData)
+
+
 
         });
 
@@ -267,21 +310,54 @@ function singleCountryMap(country_iso_code, selectedCategories, selectedRelevanc
                 });
 
 
-                map.removeLayer('heatmapLayer')
-                map.removeSource('sites_distribution');
 
-                var sites_geojson = createGeoJsonFile(newData);
+                currentTsvData = newData;
 
-                addHeatMapLayer(sites_geojson);
 
-                handleZoom(newData, false);
+
+                var numSitesTsv = newData.length;
+                console.log(numSitesTsv)
+
+
+
+                var heatMapLayer = map.getLayer('heatmapLayer');
+
+                if (typeof heatMapLayer !== 'undefined') {
+                    map.removeLayer('heatmapLayer')
+                    map.removeSource('sites_distribution');
+
+                }
+
+
+                var tresholdZoom = 10;
+
+                if (numSitesTsv > 100) {
 
                 
 
 
-                //putPointsOnMap(newData)
+
+                    var sites_geojson = createGeoJsonFile(newData);
+
+                    addHeatMapLayer(sites_geojson, tresholdZoom);
+
+                    handleZoom(newData, false, tresholdZoom);
+
+                }
+
+                else {
+
+    
+
+                    handleZoom(newData, false, tresholdZoom);
 
 
+                    putPointsOnMap(newData)
+
+                }
+
+
+            
 
             });
 
@@ -315,8 +391,21 @@ function putPointsOnMap(newData) {
 
     categoryScale
         .domain(newData.map(d => d.category))
-        //.range(['#543005', '#8c510a', '#bf812d', '#dfc27d', '#f6e8c3', '#c7eae5', '#80cdc1', '#35978f', '#01665e', '#003c30'])
-        .range(['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a']);
+
+
+        //.range(['#a6cee3', '#1f78b4', '#b2df8a', '#33a02c', '#fb9a99', '#e31a1c', '#fdbf6f', '#ff7f00', '#cab2d6', '#6a3d9a']);
+        .range([
+            '#ff7f00', //Arancione scuro
+            '#a6cee3', //Celeste
+            '#33a02c', //Verde scuro
+            '#e31a1c', //Rosso
+            '#6a3d9a', //Viola
+            '#fdbf6f', //Arancione chiaro
+            '#1f78b4', //Blu
+            '#b2df8a', //Verde chiaro
+            '#fb9a99', //Rosa salmone
+            '#cab2d6', //Lilla
+            ]);
 
 
     var singleCountryMapSvg = document.getElementById('mapSingleCountry')
@@ -535,6 +624,10 @@ function fromBarchartToSingleCountryHoverIn(point) {
 
 
     makeCircleBigger(point)
+
+    map.flyTo({
+        center: [point.longitude, point.latitude] //[lng, lat]
+    })
 
 }
 

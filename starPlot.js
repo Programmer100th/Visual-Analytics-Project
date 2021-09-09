@@ -289,7 +289,7 @@ var starPlot = {
         .append("svg")
         .attr("width", w)
         .attr("height", h)
-        .attr("class", "flex_item_secondary")
+        .attr("class", "col-sm flex_item_secondary")
         .attr('id', 'starplot')
 
         var currentdata = [], finaldata = [];
@@ -347,8 +347,8 @@ var starPlot = {
       
                 //Options for the star plot, other than default
                 var mycfg = {
-                  w: w - 170,
-                  h: h - 80,
+                  w: w - 200,
+                  h: h - 70,
                   maxValue: 100
                   //color: colorScale
                   //levels: 6,
@@ -477,8 +477,8 @@ var starPlot = {
   
             //Options for the star plot, other than default
             var mycfg = {
-              w: w,
-              h: h,
+              w: w - 30,
+              h: h + 10,
               maxValue: 100
               //color: colorScale
               //levels: 6,

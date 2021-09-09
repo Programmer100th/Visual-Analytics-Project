@@ -1,8 +1,8 @@
-import { fromBarchartToSingleCountryHoverIn }   from './singleCountryMap.js'
-import { fromBarchartToSingleCountryHoverOut }  from './singleCountryMap.js'
-import { fromBarchartToSingleCountryClick }     from './singleCountryMap.js'
-import { fromBarchartToScatterplotHoverIn }     from './scatterplot.js'
-import { fromBarchartToScatterplotHoverOut }    from './scatterplot.js'
+import { fromBarchartToSingleCountryHoverIn } from './singleCountryMap.js'
+import { fromBarchartToSingleCountryHoverOut } from './singleCountryMap.js'
+import { fromBarchartToSingleCountryClick } from './singleCountryMap.js'
+import { fromBarchartToScatterplotHoverIn } from './scatterplot.js'
+import { fromBarchartToScatterplotHoverOut } from './scatterplot.js'
 
 
 function visualizeData(data, width, height) {
@@ -153,8 +153,8 @@ function visualizeData(data, width, height) {
         d3.selectAll(labels)
             .transition()
             .duration(200)
-            .style("fill", function() { if(d.category == this.textContent) return "green" })
-            
+            .style("fill", function () { if (d.category == this.textContent) return "green" })
+
 
 
         fromBarchartToSingleCountryHoverIn(d)
@@ -201,6 +201,38 @@ function myBarChartFirstTime() {
         .attr("height", height)
         .attr("class", "col-sm flex_item_secondary")
         .attr('id', "barchart")
+
+
+    var noDataText = svg.append("text")
+
+        .attr('id', 'noDataAvailableBarchart')
+        .attr("y", '50%')
+        .attr('x', '50%')
+        .attr('text-anchor', "middle")
+        .style('display', 'none')
+        .text("No data available");
+
+
+
+        /*
+
+var xAxisLabel = svg.append("text")
+    .attr("class", "x_label")
+    //.attr("text-anchor", "end")
+    .attr("x", 120)
+    .attr("y", height - 6)
+    .text("Relevance");
+
+
+var yAxisLabel = svg.append("text")
+    .attr("class", "y_label")
+    .attr("text-anchor", "end")
+    .attr("y", 10)
+    .attr('x', -50)
+    .attr("dy", ".75em")
+    .attr("transform", "rotate(-90)")
+    .text("Site");
+    */
 
     d3.tsv("./data_files/geoviewsnew_2.tsv")
         .then(data => {
@@ -264,13 +296,42 @@ function myBarChart(selectedCountry, selectedCategories, selectedRelevance) {
 
             })
 
-            //Order the sites by relevance in descending order
-            newData.sort((a, b) => b.relevance - a.relevance)
 
-            //Takes the 10 sites with highest relevance
-            newData = newData.slice(0, 10)
 
-            visualizeData(newData, width, height);
+
+            if (newData.length == 0) {
+
+
+                var barchartG = document.getElementById('barchartG')
+                barchartG.style.display = 'none';
+
+                var noDataText = document.getElementById('noDataAvailableBarchart')
+                noDataText.style.display = 'block';
+
+            }
+
+            else {
+
+
+                var noDataText = document.getElementById('noDataAvailableBarchart')
+                noDataText.style.display = 'none';
+
+
+                var barchartG = document.getElementById('barchartG')
+                barchartG.style.display = 'block';
+
+
+
+                //Order the sites by relevance in descending order
+                newData.sort((a, b) => b.relevance - a.relevance)
+
+                //Takes the 10 sites with highest relevance
+                newData = newData.slice(0, 10)
+
+                visualizeData(newData, width, height);
+            }
+
+     
         })
 
 }
