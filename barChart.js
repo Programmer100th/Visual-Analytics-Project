@@ -23,7 +23,7 @@ function visualizeData(data, width, height) {
 
 
     //Play with margin left for words in vertical axis
-    const margin = { top: 25, right: 20, bottom: 25, left: 120 };
+    const margin = { top: 25, right: 20, bottom: 50, left: 120 };
 
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
@@ -61,6 +61,31 @@ function visualizeData(data, width, height) {
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
         .attr('id', 'barchartG');
 
+
+
+
+    var xAxisLabel = g.append("text")
+        .attr("class", "x_label")
+        //.attr("text-anchor", "end")
+        .attr("x", 0)
+        .attr("y", height - 35)
+        .text("Relevance");
+
+
+        /*
+
+    var yAxisLabel = g.append("text")
+        .attr("class", "y_label")
+        .attr("text-anchor", "end")
+        .attr("y", 10)
+        .attr('x', -50)
+        .attr("dy", ".75em")
+        .attr("transform", "rotate(-90)")
+        .text("Site");
+
+        */
+
+
     g.append('g').call(xAxis)
         .attr('transform', 'translate(' + 0 + ',' + innerHeight + ')')
 
@@ -77,6 +102,7 @@ function visualizeData(data, width, height) {
         .enter()
         .append('rect')
         .attr('y', d => yScale(yValue(d)))
+
 
         /*
         .attr('y', function(d)
@@ -193,7 +219,7 @@ function myBarChartFirstTime() {
 
 
     const width = window.innerWidth / 3;
-    const height = window.innerHeight / 7 * 3;
+    const height = window.innerHeight / 9 * 4;
 
 
     const svg = d3.select("#row2").append("svg")
@@ -214,25 +240,7 @@ function myBarChartFirstTime() {
 
 
 
-        /*
 
-var xAxisLabel = svg.append("text")
-    .attr("class", "x_label")
-    //.attr("text-anchor", "end")
-    .attr("x", 120)
-    .attr("y", height - 6)
-    .text("Relevance");
-
-
-var yAxisLabel = svg.append("text")
-    .attr("class", "y_label")
-    .attr("text-anchor", "end")
-    .attr("y", 10)
-    .attr('x', -50)
-    .attr("dy", ".75em")
-    .attr("transform", "rotate(-90)")
-    .text("Site");
-    */
 
     d3.tsv("./data_files/geoviewsnew_2.tsv")
         .then(data => {
@@ -269,7 +277,7 @@ function myBarChart(selectedCountry, selectedCategories, selectedRelevance) {
     selectedRelevance = parseInt(selectedRelevance)
 
     const width = window.innerWidth / 3;
-    const height = window.innerHeight / 7 * 3;
+    const height = window.innerHeight / 9 * 4;
 
     d3.tsv("./data_files/geoviewsnew_2.tsv")
         .then(data => {
@@ -331,7 +339,7 @@ function myBarChart(selectedCountry, selectedCategories, selectedRelevance) {
                 visualizeData(newData, width, height);
             }
 
-     
+
         })
 
 }

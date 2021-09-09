@@ -19,18 +19,25 @@ function visualizeData(data, width, height) {
     var xExtents = d3.extent(data, xValue);
     var yExtents = d3.extent(data, yValue);
 
+    xExtents[0] = parseFloat(xExtents[0])
+    xExtents[1] = parseFloat(xExtents[1])
+    yExtents[0] = parseFloat(yExtents[0])
+    yExtents[1] = parseFloat(yExtents[1])
+
+
+
 
     const xScale = d3.scaleLinear()
 
         //.domain(d3.extent(data, xValue))
-        .domain([xExtents[0] - 2, xExtents[1]])
+        .domain([xExtents[0] - 4, xExtents[1] + 3])
         .range([0, innerWidth]);
 
 
     const yScale = d3.scaleLinear()
 
         //.domain(d3.extent(data, yValue))
-        .domain([yExtents[0] - 3, yExtents[1]])
+        .domain([yExtents[0] - 4, yExtents[1] + 2])
         .range([innerHeight, 0])
 
 
@@ -186,7 +193,7 @@ function mouseOut(event, d) {
 function myScatterplotFirstTime() {
 
     const width = window.innerWidth / 3;
-    const height = window.innerHeight / 7 * 3;
+    const height = window.innerHeight / 9 * 4;
 
     const svg = d3.select("#row2").append("svg")
         .attr("width", width)
@@ -242,7 +249,7 @@ function myScatterplotFirstTime() {
 function myScatterplot(selectedCountry, selectedCategories, selectedRelevance) {
 
     const width = window.innerWidth / 3;
-    const height = window.innerHeight / 7 * 3;
+    const height = window.innerHeight / 9 * 4;
 
     selectedRelevance = parseInt(selectedRelevance)
 
@@ -432,7 +439,7 @@ function scatterplotProf() {
 
 
     const width = window.innerWidth / 3;
-    const height = window.innerHeight / 7 * 3;
+    const height = window.innerHeight / 9 * 4;
 
     var parseDate = d3.timeParse("%b %Y");
 

@@ -1,8 +1,8 @@
-import { colorLegend }                              from './colorLegend.js'
-import { fromSingleCountryToBarchartHoverIn }       from './barChart.js'
-import { fromSingleCountryToBarchartHoverOut }      from './barChart.js'
-import { fromSingleCountryToScatterplotHoverIn }    from './scatterplot.js'
-import { fromSingleCountryToScatterplotHoverOut }   from './scatterplot.js'
+import { colorLegend } from './colorLegend.js'
+import { fromSingleCountryToBarchartHoverIn } from './barChart.js'
+import { fromSingleCountryToBarchartHoverOut } from './barChart.js'
+import { fromSingleCountryToScatterplotHoverIn } from './scatterplot.js'
+import { fromSingleCountryToScatterplotHoverOut } from './scatterplot.js'
 
 let map;
 let geocoder;
@@ -26,12 +26,10 @@ function createGeoJsonFile(data) {
         properties['country'] = row['country']
         properties['category'] = row['category']
         properties['country_iso'] = row['country_iso']
-        if(row['relevance'] == "")
-        {
+        if (row['relevance'] == "") {
             properties['relevance'] = 0
         }
-        else
-        {
+        else {
             properties['relevance'] = parseInt(row['relevance'])
         }
 
@@ -51,8 +49,10 @@ function createGeoJsonFile(data) {
 function addHeatMapLayer(sites_geojson, tresholdZoom) {
 
 
-    var num_sites = sites_geojson.features.length
-    console.log(num_sites)
+
+    d3.select('#colorLegendBase').remove();
+
+    var num_sites = sites_geojson.features.length;
 
 
     map.addSource('sites_distribution', {
@@ -137,7 +137,7 @@ function addHeatMapLayer(sites_geojson, tresholdZoom) {
     // add heatmap layer here
     // add circle layer here
 
-   
+
 
 }
 
@@ -145,14 +145,25 @@ function addHeatMapLayer(sites_geojson, tresholdZoom) {
 function handleZoom(data, pointsAreOnMap, tresholdZoom) {
 
 
+    if (map.getZoom() > tresholdZoom) {
+
+
+        d3.selectAll(".sitesSingleCountry").exit()
+        d3.selectAll(".sitesSingleCountry").remove()
+        pointsAreOnMap = true
+        putPointsOnMap(currentTsvData)
+
+    }
+
+
 
     map.on('zoom', () => {
 
-        
+
 
         if (currentTsvData.length > 100) {
 
-           
+
             var currentZoom = map.getZoom();
 
             if (currentZoom > tresholdZoom && pointsAreOnMap == false) {
@@ -163,6 +174,7 @@ function handleZoom(data, pointsAreOnMap, tresholdZoom) {
 
             }
             else if (currentZoom <= tresholdZoom && pointsAreOnMap == true) {
+                d3.select('#colorLegendBase').remove();
                 d3.selectAll(".sitesSingleCountry").exit()
                 d3.selectAll(".sitesSingleCountry").remove()
                 pointsAreOnMap = false
@@ -173,7 +185,7 @@ function handleZoom(data, pointsAreOnMap, tresholdZoom) {
 
 
 
-   
+
 
     })
 
@@ -193,7 +205,14 @@ function singleCountryMapFirstTime() {
     mapboxgl.accessToken = 'pk.eyJ1IjoicHJvZ3JhbW1lcjEwMHRoIiwiYSI6ImNrc2dkaWh2cjExcGQyd3RidGp4bmJ2engifQ.d2gGexRnrH1v7UjVYsBx2A';
     map = new mapboxgl.Map({
         container: 'map', // container ID
-        style: 'mapbox://styles/mapbox/streets-v11', // style URL
+
+
+        //Optimize the performance but we need to understand if it affects something important
+
+        //style: 'mapbox://styles/mapbox/streets-v11', // style URL
+        style: 'mapbox://styles/mapbox/streets-v11?optimize=true', // style URL
+
+
         center: [12.75, 41.0], // starting position [lng, lat]
         zoom: 2 // starting zoom
 
@@ -224,17 +243,6 @@ function singleCountryMapFirstTime() {
         .attr("height", "100%")
         .attr('id', "mapSingleCountry")
         .style("position", "absolute")
-        .style("z-index", 2);
-
-
-    var g = d3.select('#mapSingleCountry').append("g")
-        .attr('id', 'colorLegendBase')
-
-    const colorLegendG = d3.select('#colorLegendBase').append('g')
-        .attr('transform', 'translate(' + window.innerWidth / 40 + ',' + window.innerHeight / 6 + ')')
-        .attr('id', 'colorLegendSingleCountry');
-
-
 
 
 
@@ -294,19 +302,17 @@ function singleCountryMap(country_iso_code, selectedCategories, selectedRelevanc
 
                 data.filter(function (row) {
 
-                    if(row['relevance'] == "")
-                    {
+                    if (row['relevance'] == "") {
                         row['relevance'] = 0;
                     }
 
 
-                    if(selectedCategories.includes(row['category']) && row['relevance'] >= selectedRelevance && row['country_iso'] == country_iso_code)
-                    {
+                    if (selectedCategories.includes(row['category']) && row['relevance'] >= selectedRelevance && row['country_iso'] == country_iso_code) {
                         newData.push(row)
-                        
+
                     }
-                   
-                    
+
+
                 });
 
 
@@ -316,8 +322,6 @@ function singleCountryMap(country_iso_code, selectedCategories, selectedRelevanc
 
 
                 var numSitesTsv = newData.length;
-                console.log(numSitesTsv)
-
 
 
                 var heatMapLayer = map.getLayer('heatmapLayer');
@@ -331,33 +335,44 @@ function singleCountryMap(country_iso_code, selectedCategories, selectedRelevanc
 
                 var tresholdZoom = 10;
 
-                if (numSitesTsv > 100) {
 
-                
+                if (numSitesTsv != 0) {
+
+                    if (numSitesTsv > 100) {
 
 
 
-                    var sites_geojson = createGeoJsonFile(newData);
 
-                    addHeatMapLayer(sites_geojson, tresholdZoom);
 
-                    handleZoom(newData, false, tresholdZoom);
+                        var sites_geojson = createGeoJsonFile(newData);
 
+                        addHeatMapLayer(sites_geojson, tresholdZoom);
+
+                        handleZoom(newData, false, tresholdZoom);
+
+                    }
+
+                    else {
+
+
+
+                        handleZoom(newData, false, tresholdZoom);
+
+
+                        putPointsOnMap(newData)
+
+                    }
                 }
 
-                else {
 
-    
-
-                    handleZoom(newData, false, tresholdZoom);
-
-
-                    putPointsOnMap(newData)
-
+                //Remove the legend if there are no points to show on map
+                else
+                {
+                    d3.select('#colorLegendBase').remove()
                 }
 
 
-            
+
 
             });
 
@@ -405,7 +420,7 @@ function putPointsOnMap(newData) {
             '#b2df8a', //Verde chiaro
             '#fb9a99', //Rosa salmone
             '#cab2d6', //Lilla
-            ]);
+        ]);
 
 
     var singleCountryMapSvg = document.getElementById('mapSingleCountry')
@@ -454,14 +469,19 @@ function putPointsOnMap(newData) {
     }
 
 
+    //Here I handle color legend
+
+    d3.select('#colorLegendBase').remove();
+
+    var g = d3.select('#mapSingleCountry').append("g")
+        .attr('id', 'colorLegendBase')
+
+    const colorLegendG = d3.select('#colorLegendBase').append('g')
+        .attr('transform', 'translate(' + window.innerWidth / 40 + ',' + window.innerHeight / 6 + ')')
+        .attr('id', 'colorLegendSingleCountry');
 
 
-
-    const colorLegendG = document.getElementById('colorLegendSingleCountry');
-
-
-
-    d3.select(colorLegendG)
+    colorLegendG
         .call(colorLegend, {
             colorScale: categoryScale,
             circleRadius: 5,
@@ -517,7 +537,7 @@ function mouseOver(event, d) {
     d3.selectAll(labels)
         .transition()
         .duration(200)
-        .style("fill", function() { if(d.category == this.textContent) return "green" })
+        .style("fill", function () { if (d.category == this.textContent) return "green" })
 
 
     fromSingleCountryToBarchartHoverIn(d);
@@ -654,6 +674,16 @@ function fromBarchartToSingleCountryClick(point) {
 
 function fromScatterplotToSingleCountryHoverIn(point) {
     makeCircleBigger(point)
+
+
+
+    //Da aggiungere se mettiamo le coordinate nello scatterplot
+    /*
+    map.flyTo({
+        center: [point.longitude, point.latitude] //[lng, lat]
+    })
+
+    */
 
 }
 

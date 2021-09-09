@@ -283,7 +283,7 @@ var starPlot = {
   function myStarPlotFirstTime() {
 
     const w = window.innerWidth / 3;
-    const h = window.innerHeight / 7 * 3;
+    const h = window.innerHeight / 9 * 4;
 
     var svg = d3.select('#row2')
         .append("svg")

@@ -166,7 +166,7 @@ function colorWorldMap(countries, path) {
 
 function worldMapFirstTime() {
     var width = window.innerWidth / 2;
-    var height = (window.innerHeight / 7) * 3;
+    var height = (window.innerHeight / 9) * 4;
 
 
     var projection = d3.geoMercator()
@@ -275,7 +275,7 @@ function worldMap(selectedCategories, selectedRelevance) {
 
 
     var width = window.innerWidth / 2;
-    var height = window.innerHeight / 7 * 3;
+    var height = window.innerHeight / 9 * 4;
 
 
     var projection = d3.geoMercator()
