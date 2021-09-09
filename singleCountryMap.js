@@ -1,13 +1,11 @@
-import { colorLegend } from './colorLegend.js'
-import { fromSingleCountryToBarchartHoverIn } from './barChart.js'
-import { fromSingleCountryToBarchartHoverOut } from './barChart.js'
-import { fromSingleCountryToScatterplotHoverIn } from './scatterplot.js'
-import { fromSingleCountryToScatterplotHoverOut } from './scatterplot.js'
-
+import { colorLegend }                              from './colorLegend.js'
+import { fromSingleCountryToBarchartHoverIn }       from './barChart.js'
+import { fromSingleCountryToBarchartHoverOut }      from './barChart.js'
+import { fromSingleCountryToScatterplotHoverIn }    from './scatterplot.js'
+import { fromSingleCountryToScatterplotHoverOut }   from './scatterplot.js'
 
 let map;
 let geocoder;
-
 
 function createGeoJsonFile(data) {
     var sites_geojson = {
@@ -45,11 +43,8 @@ function createGeoJsonFile(data) {
 
     })
 
-
     return sites_geojson;
-
 }
-
 
 
 function addHeatMapLayer(sites_geojson) {
@@ -59,9 +54,6 @@ function addHeatMapLayer(sites_geojson) {
         type: 'geojson',
         data: sites_geojson
     })
-
-
-
 
     map.addLayer(
         {
@@ -123,10 +115,8 @@ function addHeatMapLayer(sites_geojson) {
     );
 
 
-
     // add heatmap layer here
     // add circle layer here
-
 
 }
 
@@ -156,7 +146,6 @@ function handleZoom(data, pointsAreOnMap) {
 
 
 function singleCountryMapFirstTime() {
-
 
 
     var mapDiv = document.createElement("div");
@@ -192,10 +181,6 @@ function singleCountryMapFirstTime() {
     geocoder.query("IT");
 
 
-
-
-
-
     var container = map.getCanvasContainer();
     var svg = d3
         .select(container)
@@ -223,10 +208,7 @@ function singleCountryMapFirstTime() {
 
             var newData = []
 
-
             data.filter(function (row) {
-
-
 
                 if (row['country_iso'] == "IT") {
 
@@ -234,9 +216,6 @@ function singleCountryMapFirstTime() {
                 }
 
             })
-
-
-            
 
 
             var sites_geojson = createGeoJsonFile(newData);
@@ -248,15 +227,8 @@ function singleCountryMapFirstTime() {
 
             handleZoom(newData, false);
 
-            
-
-
-
 
             //putPointsOnMap(newData)
-
-
-
 
         });
 
@@ -270,18 +242,12 @@ function singleCountryMap(country_iso_code, selectedCategories, selectedRelevanc
 
     console.log("Attuali in SingleCountryMap:", country_iso_code, selectedCategories, selectedRelevance)
 
-
-
     function filterData() {
 
         d3.tsv("./data_files/geoviewsnew_2.tsv")
             .then(data => {
 
                 var newData = []
-
-
-
-
 
                 data.filter(function (row) {
 
@@ -291,19 +257,15 @@ function singleCountryMap(country_iso_code, selectedCategories, selectedRelevanc
                     }
 
 
-
                     if(selectedCategories.includes(row['category']) && row['relevance'] >= selectedRelevance && row['country_iso'] == country_iso_code)
                     {
                         newData.push(row)
                         
                     }
                    
-
                     
                 });
 
-
-                
 
                 map.removeLayer('heatmapLayer')
                 map.removeSource('sites_distribution');
@@ -318,8 +280,6 @@ function singleCountryMap(country_iso_code, selectedCategories, selectedRelevanc
 
 
                 //putPointsOnMap(newData)
-
-
 
 
 
@@ -346,9 +306,7 @@ function singleCountryMap(country_iso_code, selectedCategories, selectedRelevanc
         filterData()
     }
 
-
 }
-
 
 
 function putPointsOnMap(newData) {
@@ -465,12 +423,18 @@ function mouseOver(event, d) {
             }
         })
 
+
+    var labels = document.getElementsByClassName("legend")
+    d3.selectAll(labels)
+        .transition()
+        .duration(200)
+        .style("fill", function() { if(d.category == this.textContent) return "green" })
+
+
     fromSingleCountryToBarchartHoverIn(d);
     fromSingleCountryToScatterplotHoverIn(d);
 
 }
-
-
 
 
 function mouseOut(event, d) {
@@ -484,6 +448,11 @@ function mouseOut(event, d) {
         .attr('r', 5)
         .attr('stroke-width', "1px");
 
+    var labels = document.getElementsByClassName("legend")
+    d3.selectAll(labels)
+        .transition()
+        .duration(200)
+        .style("fill", "black")
 
 
     fromSingleCountryToBarchartHoverOut(d);

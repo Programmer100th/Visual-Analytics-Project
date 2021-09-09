@@ -4,6 +4,9 @@ import { fromStarplotToSingleCountryHoverIn }   from "./singleCountryMap.js"
 import { fromStarplotToSingleCountryHoverOut }  from "./singleCountryMap.js"
 import { fromStarplotToScatterplotHoverIn }     from "./scatterplot.js";
 import { fromStarplotToScatterplotHoverOut }    from "./scatterplot.js";
+import { singleCountryMap }                     from './singleCountryMap.js';
+import { myBarChart }                           from './barChart.js';
+import { myScatterplot }                        from './scatterplot.js';
 
 var starPlot = {
     draw: function (id, d, options) {
@@ -110,16 +113,18 @@ var starPlot = {
         .text(function (d) { return d })
         .style("font-family", "sans-serif")
         .style("font-size", "14px")
+        .style("font-weight", function(d) { if($('#categoryMenu').val().includes(d)) { return "bold" } else { return "normal" }})
         .attr("text-anchor", "middle")
         .attr("dy", "1.5em")
         .attr("transform", function (d, i) { return "translate(-5, -20)" })
         .attr("x", function (d, i) { return cfg.w / 2 * (1 - cfg.factorLegend * Math.sin(i * cfg.radians / total)) - 60 * Math.sin(i * cfg.radians / total); })
         .attr("y", function (d, i) { return cfg.h / 2 * (1 - Math.cos(i * cfg.radians / total)) - 20 * Math.cos(i * cfg.radians / total); })
+        
 
         .on('mouseover', function (d) {
           d3.select(this)
             .style("fill", "green")
-            .style("cursor", "default")
+            .style("cursor", "pointer")
 
             fromStarplotToSingleCountryHoverIn(this.textContent)
             fromStarplotToBarchartHoverIn(this.textContent)
@@ -133,6 +138,29 @@ var starPlot = {
           fromStarplotToSingleCountryHoverOut(this.textContent)
           fromStarplotToBarchartHoverOut()
           fromStarplotToScatterplotHoverOut(this.textContent)
+        })
+
+        .on('click', function() {
+          console.log(this.textContent)
+          var countryMenu = document.getElementById("countryMenu");
+          var selectedCategory = []
+          selectedCategory.push(this.textContent)
+          document.getElementById("categoryMenu").value = this.textContent
+
+          $('#categoryMenu').selectpicker('refresh');
+
+          var relevanceMenu = document.getElementById("relevanceMenu");
+
+          var currentCountry = countryMenu.options[countryMenu.selectedIndex].value;
+          console.log(currentCountry)
+          var currentRelevance = relevanceMenu.value;
+
+          singleCountryMap(currentCountry, selectedCategory, currentRelevance, false)
+          myBarChart(currentCountry, selectedCategory, currentRelevance)
+          myStarPlot(currentCountry, currentRelevance)
+          myScatterplot(currentCountry, selectedCategory, currentRelevance)
+          
+
         });
 
       let dataValues;
@@ -302,12 +330,12 @@ var starPlot = {
                       index = j
                   }
 
-                  var site = parseInt(arrayOfSites[index])
-                  if(isNaN(site)) site = 0
+                  var value = parseInt(arrayOfSites[index])
+                  if(isNaN(value)) value = 0
       
                   currentdata.push({
                     axis: arrayOfFCategories[i],
-                    value: 2 * parseInt(site/sum*100)
+                    value: 2 * parseInt(value/sum*100)
                   })
                 }
       
@@ -423,6 +451,11 @@ var starPlot = {
   
               value = parseInt(arrayOfValues[i])
               sum   = arrayOfValues.reduce(add, 0)
+
+              var finalValue = 2 * parseInt(value / sum * 100)
+
+              if(finalValue > 100)
+                finalValue = 100
               
 
               //var value = selectedCountry == "World" ? parseInt(arrayOfFValues[i]) : parseInt(arrayOfValues[i])
@@ -432,7 +465,7 @@ var starPlot = {
   
               currentdata.push({
                 axis: arrayOfFCategories[i],
-                value: 2 * parseInt(value / sum * 100)
+                value: finalValue
               })
             }
   

@@ -1,8 +1,8 @@
-import { worldMap } from './worldMap.js';
+import { worldMap }         from './worldMap.js';
 import { singleCountryMap } from './singleCountryMap.js'
-import { myBarChart } from './barChart.js';
-import { myStarPlot } from './starPlot.js';
-import { myScatterplot } from './scatterplot.js';
+import { myBarChart }       from './barChart.js';
+import { myStarPlot }       from './starPlot.js';
+import { myScatterplot }    from './scatterplot.js';
 
 
 

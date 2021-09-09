@@ -1,16 +1,14 @@
-import { fromBarchartToSingleCountryHoverIn } from './singleCountryMap.js'
-import { fromBarchartToSingleCountryHoverOut } from './singleCountryMap.js'
-import { fromBarchartToSingleCountryClick } from './singleCountryMap.js'
-import { fromBarchartToScatterplotHoverIn } from './scatterplot.js'
-import { fromBarchartToScatterplotHoverOut } from './scatterplot.js'
+import { fromBarchartToSingleCountryHoverIn }   from './singleCountryMap.js'
+import { fromBarchartToSingleCountryHoverOut }  from './singleCountryMap.js'
+import { fromBarchartToSingleCountryClick }     from './singleCountryMap.js'
+import { fromBarchartToScatterplotHoverIn }     from './scatterplot.js'
+import { fromBarchartToScatterplotHoverOut }    from './scatterplot.js'
 
 
 function visualizeData(data, width, height) {
 
     const xValue = d => +d.relevance
     //const yValue = d => d.name
-
-
 
     //Necessary otherwise the name of the site doesn't fit the svg
     var yValue = (d) => {
@@ -22,10 +20,6 @@ function visualizeData(data, width, height) {
             return d.name
         }
     }
-
-
-
-
 
 
     //Play with margin left for words in vertical axis
@@ -46,11 +40,9 @@ function visualizeData(data, width, height) {
         .padding(0.1);
 
 
-
     //Use ticks to decide how many maximum ticks can be in xAxis
     const xAxis = d3.axisBottom(xScale).ticks(4);
     const yAxis = d3.axisLeft(yScale);
-
 
 
     const categoryScale = d3.scaleOrdinal();
@@ -75,11 +67,7 @@ function visualizeData(data, width, height) {
         .style("font-size", "1vw");
 
     g.append('g').call(yAxis)
-
         .style("font-size", "1vw");
-
-
-   
 
 
 
@@ -87,13 +75,8 @@ function visualizeData(data, width, height) {
 
         .data(data)
         .enter()
-
         .append('rect')
-
-
         .attr('y', d => yScale(yValue(d)))
-
-
 
         /*
         .attr('y', function(d)
@@ -102,7 +85,6 @@ function visualizeData(data, width, height) {
         })
 
         */
-
 
 
         .attr('class', "barchartRects")
@@ -115,7 +97,6 @@ function visualizeData(data, width, height) {
         */
 
 
-
         .attr("fill", "steelblue")
 
         .attr('height', yScale.bandwidth())
@@ -124,10 +105,6 @@ function visualizeData(data, width, height) {
         .transition()
         .duration(1500)
         .attr('width', d => xScale(xValue(d)));
-
-
-
-
 
 
     g.selectAll('rect')
@@ -149,14 +126,10 @@ function visualizeData(data, width, height) {
         console.log(d)
 
 
-
-
         d3.select(this)
             .transition()
             .duration(500)
             .style("fill", "green")
-
-
 
 
         d3.select(this)
@@ -176,6 +149,12 @@ function visualizeData(data, width, height) {
             })
 
 
+        var labels = document.getElementsByClassName("legend")
+        d3.selectAll(labels)
+            .transition()
+            .duration(200)
+            .style("fill", function() { if(d.category == this.textContent) return "green" })
+            
 
 
         fromBarchartToSingleCountryHoverIn(d)
@@ -190,6 +169,14 @@ function visualizeData(data, width, height) {
             .transition()
             .duration(500)
             .style('fill', "steelblue")
+
+
+        var labels = document.getElementsByClassName("legend")
+        d3.selectAll(labels)
+            .transition()
+            .duration(200)
+            .style("fill", "black")
+
 
 
         fromBarchartToSingleCountryHoverOut(d)
@@ -264,21 +251,13 @@ function myBarChart(selectedCountry, selectedCategories, selectedRelevance) {
                     if (selectedCountry == null || selectedCountry == "World") {
                         if (selectedCategories.includes(row['category']) && row['relevance'] >= selectedRelevance) {
                             newData.push(row)
-
                         }
-
 
                     }
                     else {
                         if (row['country_iso'] == selectedCountry && row['relevance'] >= selectedRelevance && selectedCategories.includes(row['category'])) {
-
-
                             newData.push(row)
-
-
                         }
-
-
 
                     }
                 }
@@ -293,7 +272,6 @@ function myBarChart(selectedCountry, selectedCategories, selectedRelevance) {
 
             visualizeData(newData, width, height);
         })
-
 
 }
 

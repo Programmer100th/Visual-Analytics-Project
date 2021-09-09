@@ -1,16 +1,13 @@
-import { fromScatterplotToSingleCountryHoverIn } from './singleCountryMap.js'
-import { fromScatterplotToSingleCountryHoverOut } from './singleCountryMap.js'
-import { fromScatterplotToBarchartHoverIn } from './barChart.js'
-import { fromScatterplotToBarchartHoverOut } from './barChart.js'
+import { fromScatterplotToSingleCountryHoverIn }    from './singleCountryMap.js'
+import { fromScatterplotToSingleCountryHoverOut }   from './singleCountryMap.js'
+import { fromScatterplotToBarchartHoverIn }         from './barChart.js'
+import { fromScatterplotToBarchartHoverOut }        from './barChart.js'
 
 
 function visualizeData(data, width, height) {
 
     const xValue = d => d.x
     const yValue = d => d.y
-
-
-
 
     const margin = { top: 25, right: 50, bottom: 25, left: 35 };
 
@@ -46,9 +43,6 @@ function visualizeData(data, width, height) {
     categoryScale
         .domain(data.map(d => d.category))
         .range(['#543005', '#8c510a', '#bf812d', '#dfc27d', '#f6e8c3', '#c7eae5', '#80cdc1', '#35978f', '#01665e', '#003c30'])
-
-    
-
 
 
     var svg = document.getElementById('myScatterplot')
@@ -96,7 +90,6 @@ function visualizeData(data, width, height) {
         .attr("stroke", "black")
         .attr("stroke-width", "2px")
 
-
         /*
         .attr("fill", function (d) {
             return categoryScale(d.category)
@@ -109,9 +102,7 @@ function visualizeData(data, width, height) {
         .on('mouseover', mouseOver)
         .on('mouseout', mouseOut)
 
-
 }
-
 
 
 function clicked() {
@@ -136,7 +127,6 @@ function mouseOver(event, d) {
         .attr('r', 20)
 
 
-
     d3.select(this)
         .append("g:title")
         .attr('x', 100)
@@ -153,6 +143,14 @@ function mouseOver(event, d) {
             }
         })
 
+
+    var labels = document.getElementsByClassName("legend")
+    d3.selectAll(labels)
+        .transition()
+        .duration(200)
+        .style("fill", function() { if(d.category == this.textContent) return "green" })
+
+
     fromScatterplotToSingleCountryHoverIn(d)
     fromScatterplotToBarchartHoverIn(d)
 }
@@ -165,6 +163,15 @@ function mouseOut(event, d) {
         .duration(1000)
         .attr('r', 7)
         .attr('stroke-width', "1px");
+
+
+    var labels = document.getElementsByClassName("legend")
+    d3.selectAll(labels)
+        .transition()
+        .duration(200)
+        .style("fill", "black")
+
+
 
     fromScatterplotToSingleCountryHoverOut(d)
     fromScatterplotToBarchartHoverOut(d)

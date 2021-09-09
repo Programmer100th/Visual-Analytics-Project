@@ -1,8 +1,8 @@
 import { singleCountryMap } from './singleCountryMap.js'
-import { myBarChart } from './barChart.js';
-import { colorLegend } from './colorLegend.js'
-import { myStarPlot } from './starPlot.js';
-import { myScatterplot } from './scatterplot.js';
+import { myBarChart }       from './barChart.js';
+import { colorLegend }      from './colorLegend.js'
+import { myStarPlot }       from './starPlot.js';
+import { myScatterplot }    from './scatterplot.js';
 
 
 
@@ -38,7 +38,7 @@ function clickOnCountry(event, d) {
 
     singleCountryMap(d.properties.ISO_A2, currentCategories, currentRelevance, true)
     myBarChart(d.properties.ISO_A2, currentCategories, currentRelevance)
-    myStarPlot(d.properties.ISO_A2)
+    myStarPlot(d.properties.ISO_A2, currentRelevance)
     myScatterplot(d.properties.ISO_A2, currentCategories, currentRelevance)
 
 
