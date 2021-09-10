@@ -1,4 +1,5 @@
 import { worldMap }         from './worldMap.js';
+import { evidenceCountryBoundaries }         from './worldMap.js';
 import { singleCountryMap } from './singleCountryMap.js'
 import { myBarChart }       from './barChart.js';
 import { myStarPlot }       from './starPlot.js';
@@ -89,6 +90,7 @@ function myHeader() {
             myStarPlot(currentCountry, currentRelevance)
             myScatterplot(currentCountry, selectedCategories, currentRelevance)
 
+         
         });
 
 
@@ -110,6 +112,8 @@ function myHeader() {
             myStarPlot(selectedCountry, currentRelevance)
             myScatterplot(selectedCountry, currentCategories, currentRelevance)
 
+            evidenceCountryBoundaries(selectedCountry)
+
         });
 
 
@@ -129,11 +133,17 @@ function myHeader() {
             }
 
 
+            
+
             singleCountryMap(currentCountry, currentCategories, selectedRelevance, false)
             myBarChart(currentCountry, currentCategories, selectedRelevance)
             worldMap(currentCategories, selectedRelevance)
             myStarPlot(currentCountry, selectedRelevance)
             myScatterplot(currentCountry, currentCategories, selectedRelevance)
+
+        
+
+            
 
         });
 

@@ -1,13 +1,37 @@
 import { singleCountryMap } from './singleCountryMap.js'
-import { myBarChart }       from './barChart.js';
-import { colorLegend }      from './colorLegend.js'
-import { myStarPlot }       from './starPlot.js';
-import { myScatterplot }    from './scatterplot.js';
+import { myBarChart } from './barChart.js';
+import { colorLegend } from './colorLegend.js'
+import { myStarPlot } from './starPlot.js';
+import { myScatterplot } from './scatterplot.js';
 
 
 
 
 let countries;
+
+
+
+
+function evidenceCountryBoundaries(selectedCountry) {
+
+    
+    var g = document.getElementById('pathWorldMap');
+    d3.select(g).selectAll('path')
+        .attr('class', 'country')
+
+
+    console.log(selectedCountry)
+    d3.selectAll(".country")
+        .filter(function (d) {
+
+            return d.properties.ISO_A2 == selectedCountry
+        })
+
+
+        .attr('class', 'currentCountry')
+
+
+}
 
 
 function clickOnCountry(event, d) {
@@ -28,6 +52,7 @@ function clickOnCountry(event, d) {
     for (var i = 0; i < countryMenuOptions.length; i++) {
         if (countryMenuOptions[i].value == d.properties.ISO_A2) {
             countryMenuOptions[i].selected = true;
+            var countryIso = countryMenuOptions[i].value;
 
         }
     }
@@ -40,6 +65,7 @@ function clickOnCountry(event, d) {
     myBarChart(d.properties.ISO_A2, currentCategories, currentRelevance)
     myStarPlot(d.properties.ISO_A2, currentRelevance)
     myScatterplot(d.properties.ISO_A2, currentCategories, currentRelevance)
+    evidenceCountryBoundaries(countryIso);
 
 
 }
@@ -252,11 +278,15 @@ function worldMapFirstTime() {
 
 
 
+
+
         });
 
         console.log("COUNTRIES", countries);
 
         colorWorldMap(countries, path);
+
+        evidenceCountryBoundaries("IT");
 
     });
 
@@ -271,7 +301,16 @@ function worldMap(selectedCategories, selectedRelevance) {
 
     console.log("Attuali in World Map:", selectedCategories, selectedRelevance)
 
+
     selectedRelevance = parseInt(selectedRelevance)
+
+
+
+
+
+
+
+
 
 
     var width = window.innerWidth / 2;
@@ -344,6 +383,24 @@ function worldMap(selectedCategories, selectedRelevance) {
             colorWorldMap(countries, path);
 
 
+
+
+            //Evidence boundaries of current selected country
+
+            var countryMenuOptions = document.getElementById('countryMenu').options;
+
+            for (var i = 0; i < countryMenuOptions.length; i++) {
+                if (countryMenuOptions[i].selected == true) {
+                    console.log("YEEE")
+                    var countryIso = countryMenuOptions[i].value;
+
+                }
+            }
+
+            evidenceCountryBoundaries(countryIso)
+       
+
+
         });
 
 
@@ -352,3 +409,4 @@ function worldMap(selectedCategories, selectedRelevance) {
 
 export { worldMap };
 export { worldMapFirstTime };
+export { evidenceCountryBoundaries };

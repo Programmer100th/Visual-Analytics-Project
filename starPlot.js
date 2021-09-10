@@ -607,9 +607,9 @@ function changeStarplotIn(category){
   var labels = document.getElementsByClassName("legend")
 
   d3.selectAll(labels)
-      //.transition()
-      //.duration(200)
-      //.style("fill", function () { if (category == this.textContent) return "green" })
+      .transition()
+      .duration(200)
+      .style("fill", function () { if (category == this.textContent) return "green" })
 
   var l = document.getElementsByClassName("legend")
         
@@ -619,7 +619,6 @@ function changeStarplotIn(category){
       var element = catList[i]
       if (element.innerHTML == category) {
           element.style.fontSize   = "18px"
-          element.style.textShadow = "3px 3px 5px green"
       }
   }
 
@@ -634,7 +633,6 @@ function changeStarplotOut() {
       .duration(200)
       .style("fill", "black")
       .style("font-size", "14px")
-      .style("text-shadow", "none")
 
 }
 

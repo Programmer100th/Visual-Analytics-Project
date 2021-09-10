@@ -26,6 +26,13 @@ padding: 0% !important;
 }
 
 
+
+svg
+{
+    outline: 1px solid black;
+}
+
+
 .flex-container {
     
     display: flex !important;
@@ -51,6 +58,13 @@ padding: 0% !important;
 }
 
 
+
+
+
+
+/* World Map */
+
+
 .map
 {
     /*background:lightblue*/
@@ -65,59 +79,22 @@ padding: 0% !important;
 
 }
 
+.currentCountry
+{
+    stroke:black;
+    stroke-width: 0.7px;
+
+}
+
 .country:hover {
     fill: green
 }
 
-
-
-
-.green
-{
-    fill:#00ff00;
-    stroke:#000000;
-    stroke-width: 0.3;
-
-}
-
-.active {
-    fill: #98f5ff;
+.currentCountry:hover {
+    fill: green
 }
 
 
-
-.myLabel {
-    font-size: 0.7em;
-}
-
-
-.block {
-    display: block;
- }
-
-
-
-
-/*Color Legend */
-
-.tick {
-    cursor: default;
-}
-
-.tick circle {
-    stroke: black;
-    stroke-opacity: 0.5;
-}
-
-
-
-
-
-
-svg
-{
-    outline: 1px solid black;
-}
 
 
 
@@ -125,11 +102,14 @@ svg
 /*Dropdown menu text */
 select
 {
-    /*font-size: 20px;*/
     font-size: 1.1vw;
 }
 
 
+
+
+
+/* Mapbox map for used for single country */
 
 #map 
 {
@@ -142,9 +122,36 @@ select
 
 
 /*Needed to hide the search bar in mapbox */
+
 .mapboxgl-ctrl-geocoder {
     visibility: hidden;
 }
+
+
+
+
+
+/*Color Legend and axis barchart and scatterplot */
+
+.tick {
+    cursor: default;
+}
+
+.tick circle {
+    stroke: black;
+    stroke-opacity: 0.5;
+}
+
+.tick text {
+    color: black;
+}
+
+
+
+
+
+
+
 
 
 
@@ -180,10 +187,3 @@ select
     text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, 0 -1px 0 #fff, -1px 0 0 #fff;
     cursor: move;
   }
-
-
-
-
-
-  /*Checkbox inside dropdown for category menu */
-
