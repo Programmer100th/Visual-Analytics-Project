@@ -10,19 +10,9 @@ import { changeStarplotOut }                    from './starPlot.js'
 function visualizeData(data, width, height) {
 
     const xValue = d => +d.relevance
-    //const yValue = d => d.name
+    const yValue = d => d.name
 
-    //Necessary otherwise the name of the site doesn't fit the svg
-    var yValue = (d) => {
-
-        if ((String(d.name).length) >= 18) {
-            return d.name.substring(0, 16) + "."
-        }
-        else {
-            return d.name
-        }
-        //return d.name
-    }
+    
 
 
     //Play with margin left for words in vertical axis
@@ -45,7 +35,18 @@ function visualizeData(data, width, height) {
 
     //Use ticks to decide how many maximum ticks can be in xAxis
     const xAxis = d3.axisBottom(xScale).ticks(4);
-    const yAxis = d3.axisLeft(yScale);
+
+    //Needed otherwise the label doesn't fit the svg
+    const yAxis = d3.axisLeft(yScale).tickFormat(function(d)
+    {
+        if ((d.length) >= 18) {
+            return d.substring(0, 16) + "."
+        }
+        else {
+            return d
+        }
+    
+    });
 
 
     const categoryScale = d3.scaleOrdinal();
