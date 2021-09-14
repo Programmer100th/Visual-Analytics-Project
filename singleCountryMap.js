@@ -635,7 +635,8 @@ function fromBarchartToSingleCountryHoverIn(point) {
     makeCircleBigger(point)
 
     map.flyTo({
-        center: [point.longitude, point.latitude] //[lng, lat]
+        center: [point.longitude, point.latitude], //[lng, lat]
+        zoom: 5
     })
 
 }

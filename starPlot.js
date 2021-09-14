@@ -324,6 +324,7 @@ function myStarPlotFirstTime() {
       const fCategoriesMap = d3.rollup(tsvData, v => v.length, d => d.category);
       var fCategoriesArray = Array.from(fCategoriesMap, ([category, sites_number]) => ([category, sites_number]));
       var arrayOfFCategories = fCategoriesArray.map(x => x[0]);
+      var arrayOfFSites = fCategoriesArray.map(x => x[1]);
 
       //Sites for the chosen country
       var dataPerNation = tsvData.filter(function (d) { return d.country_iso == 'IT' });
@@ -333,6 +334,12 @@ function myStarPlotFirstTime() {
       var categoriesArray = Array.from(categoriesMap, ([category, sites_number]) => ([category, sites_number]));
       var arrayOfCategories = categoriesArray.map(x => x[0]);
       var arrayOfSites = categoriesArray.map(x => x[1]);
+
+      console.log(categoriesArray[0][0]==="Archaelogical Site")
+
+      //Cardinality of the total set of sites
+      var card = arrayOfFSites.length
+      console.log(arrayOfFSites)
 
       const sum = arrayOfSites.reduce(add, 0); // with initial value to avoid when the array is empty
 
@@ -353,12 +360,21 @@ function myStarPlotFirstTime() {
             index = j
         }
 
+        
         var value = parseInt(arrayOfSites[index])
-        if (isNaN(value)) value = 0
+
+        var finalValue = Math.log(2 * parseInt(value / sum * 100))
+
+        if (finalValue > 5)
+          finalValue = 5
+
+        if (isNaN(finalValue)) finalValue = 0
+
+        console.log(category, value, sum)
 
         currentdata.push({
           axis: arrayOfFCategories[i],
-          value: 2 * parseInt(value / sum * 100)
+          value: finalValue //+ (value / card * 100)
         })
       }
 
@@ -372,7 +388,7 @@ function myStarPlotFirstTime() {
       var mycfg = {
         w: w - 200,
         h: h - 70,
-        maxValue: 100
+        maxValue: 5
         //color: colorScale
         //levels: 6,
         //ExtraWidthX: 200
@@ -394,7 +410,7 @@ function myStarPlot(selectedCountry, selectedRelevance) {
   //d3.select("#row2").select("#starplot").remove();
 
   var w = document.getElementById("starplot").clientWidth - 170,
-    h = document.getElementById("starplot").clientHeight - 80;
+      h = document.getElementById("starplot").clientHeight - 80;
 
   selectedRelevance = isNaN(selectedRelevance) ? 0 : parseInt(selectedRelevance)
 
@@ -436,6 +452,10 @@ function myStarPlot(selectedCountry, selectedRelevance) {
       //Polygon of the chosen country
       var values;
 
+      var card = tsvData.length
+
+      console.log(card)
+
       if (selectedCountry == 'World')
         values = d3.group(dataWorld, d => d.category)
       else
@@ -475,10 +495,10 @@ function myStarPlot(selectedCountry, selectedRelevance) {
         value = parseInt(arrayOfValues[i])
         sum = arrayOfValues.reduce(add, 0)
 
-        var finalValue = 2 * parseInt(value / sum * 100)
+        var finalValue = Math.log(2 * parseInt(value / sum * 100))
 
-        if (finalValue > 100)
-          finalValue = 100
+        if (finalValue > 5)
+          finalValue = 5
 
 
         //var value = selectedCountry == "World" ? parseInt(arrayOfFValues[i]) : parseInt(arrayOfValues[i])
@@ -502,7 +522,7 @@ function myStarPlot(selectedCountry, selectedRelevance) {
       var mycfg = {
         w: w - 30,
         h: h + 10,
-        maxValue: 100
+        maxValue: 5
         //color: colorScale
         //levels: 6,
         //ExtraWidthX: 200

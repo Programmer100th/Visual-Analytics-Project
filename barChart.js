@@ -15,17 +15,18 @@ function visualizeData(data, width, height) {
     //Necessary otherwise the name of the site doesn't fit the svg
     var yValue = (d) => {
 
-        if ((String(d.name).length) >= 19) {
-            return d.name.substring(0, 18)
+        if ((String(d.name).length) >= 18) {
+            return d.name.substring(0, 16) + "."
         }
         else {
             return d.name
         }
+        //return d.name
     }
 
 
     //Play with margin left for words in vertical axis
-    const margin = { top: 25, right: 20, bottom: 50, left: 120 };
+    const margin = { top: 25, right: 20, bottom: 30, left: 120 };
 
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
@@ -67,10 +68,11 @@ function visualizeData(data, width, height) {
     var xAxisLabel = g.append("text")
         .attr("class", "x_label")
         //.attr("text-anchor", "end")
-        .attr("x", 0)
-        .attr("y", height - 35)
+        .attr("x", width - 270)
+        .attr("y", height - 60)
+        .style("font-size", "0.8vw")
         .style("fill", "black")
-        .text("Relevance");
+        .text("Wikipedia's Relevance");
         
 
 
@@ -94,7 +96,7 @@ function visualizeData(data, width, height) {
         .style("font-size", "1vw");
 
     g.append('g').call(yAxis)
-        .style("font-size", "1vw");
+        .style("font-size", "0.9vw");
 
 
 
@@ -128,7 +130,7 @@ function visualizeData(data, width, height) {
         .attr("fill", "steelblue")
 
         .attr('height', yScale.bandwidth())
-        //.attr('height', 40)
+        //.attr('height', 20)
 
         .transition()
         .duration(1500)
