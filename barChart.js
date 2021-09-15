@@ -106,32 +106,51 @@ function visualizeData(data, width, height) {
         .data(data)
         .enter()
         .append('rect')
-        .attr('y', d => yScale(yValue(d)))
+        //.attr('y', d => yScale(yValue(d)))
 
 
-        /*
+        
+
+        
         .attr('y', function(d)
         {
-            return yScale(yValue(d)) +   yScale.domain().length
-        })
+            if(yScale.domain().length < 6)
+            {
+                return yScale(yValue(d)) +   yScale.bandwidth()/4
+            }
+            else
+            {
+                return yScale(yValue(d))
 
-        */
+            }
+            
+        })
+        
+
+        
 
 
         .attr('class', "barchartRects")
-
-
-        /*
-        .attr("fill", function (d) {
-            return categoryScale(d.category)
-        })
-        */
-
-
+        .style('cursor', 'pointer')
         .attr("fill", "steelblue")
 
-        .attr('height', yScale.bandwidth())
-        //.attr('height', 20)
+        //.attr('height', yScale.bandwidth())
+
+        
+        .attr('height', function(d)
+        {
+            if(yScale.domain().length < 6)
+            {
+                return yScale.bandwidth()/2
+            }
+            else
+            {
+                return yScale.bandwidth()
+
+            }
+
+
+        } )
 
         .transition()
         .duration(1500)
