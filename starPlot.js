@@ -118,7 +118,7 @@ var starPlot = {
       .attr("text-anchor", "middle")
       .attr("dy", "1.5em")
       .attr("transform", function (d, i) { return "translate(-5, -20)" })
-      .attr("x", function (d, i) { return cfg.w / 2 * (1 - cfg.factorLegend * Math.sin(i * cfg.radians / total)) - 60 * Math.sin(i * cfg.radians / total); })
+      .attr("x", function (d, i) { return cfg.w / 2 * (1 - cfg.factorLegend * Math.sin(i * cfg.radians / total)) - 50 * Math.sin(i * cfg.radians / total); })
       .attr("y", function (d, i) { return cfg.h / 2 * (1 - Math.cos(i * cfg.radians / total)) - 20 * Math.cos(i * cfg.radians / total); })
 
 
@@ -289,7 +289,8 @@ var starPlot = {
 
 function myStarPlotFirstTime() {
 
-  const w = window.innerWidth / 3;
+  //const w = window.innerWidth / 3;
+  const w = window.innerWidth / 2;
   const h = window.innerHeight / 9 * 4;
 
   var svg = d3.select('#row2')
@@ -317,7 +318,7 @@ function myStarPlotFirstTime() {
 
   var currentdata = [], finaldata = [];
 
-  d3.tsv("./data_files/geoviewsnew_2.tsv")
+  d3.tsv("./data_files/onlySitesWithWikipediaPage.tsv")
     .then(tsvData => {
 
       //Fixed categories
@@ -428,7 +429,7 @@ function myStarPlot(selectedCountry, selectedRelevance) {
   //Data to plot
   var currentdata = [], finaldata = [];
 
-  d3.tsv("./data_files/geoviewsnew_2.tsv")
+  d3.tsv("./data_files/onlySitesWithWikipediaPage.tsv")
     .then(tsvData => {
 
       //Fixed categories

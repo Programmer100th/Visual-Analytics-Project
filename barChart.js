@@ -228,7 +228,8 @@ function myBarChartFirstTime() {
 
 
 
-    const width = window.innerWidth / 3;
+    //const width = window.innerWidth / 3;
+    const width = window.innerWidth / 2;
     const height = window.innerHeight / 9 * 4;
 
 
@@ -252,7 +253,7 @@ function myBarChartFirstTime() {
 
 
 
-    d3.tsv("./data_files/geoviewsnew_2.tsv")
+    d3.tsv("./data_files/onlySitesWithWikipediaPage.tsv")
         .then(data => {
             var newData = []
 
@@ -286,10 +287,11 @@ function myBarChart(selectedCountry, selectedCategories, selectedRelevance) {
 
     selectedRelevance = parseInt(selectedRelevance)
 
-    const width = window.innerWidth / 3;
+    //const width = window.innerWidth / 3;
+    const width = window.innerWidth / 2;
     const height = window.innerHeight / 9 * 4;
 
-    d3.tsv("./data_files/geoviewsnew_2.tsv")
+    d3.tsv("./data_files/onlySitesWithWikipediaPage.tsv")
         .then(data => {
             var newData = []
 

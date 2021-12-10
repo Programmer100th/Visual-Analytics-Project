@@ -1,3 +1,8 @@
+import sys
+sys.path.append('C:\\users\\samue\\appdata\\local\\packages\\pythonsoftwarefoundation.python.3.7_qbz5n2kfra8p0\\localcache\\local-packages\\python37\\site-packages')
+
+
+
 import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
@@ -6,12 +11,13 @@ import pandas as pd
 import math
 import csv
 
-url='./geoviewsnew.tsv'
+url='data_files/onlySitesWithWikipediaPage.tsv'
 
 features=['longitude', 'latitude', 'relevance']
 
 # load dataset into Pandas DataFrame
-df=np.genfromtxt(url,skip_header=1,usecols=[1,2,5],delimiter='\t',encoding="utf8",invalid_raise=False)
+# change the usecols each time the input file changes
+df=np.genfromtxt(url,skip_header=1,usecols=[2,3,12],delimiter='\t',encoding="utf8",invalid_raise=False)
 
 file_in_geonames = open(url, "r", encoding='utf-8')
 
@@ -55,7 +61,7 @@ pca=PCA(n_components=2)
 d_pca=pca.fit_transform(d_std)
 #d_pca is a numpy array with transformed data
 
-with open('./points_new.tsv', 'w', newline='', encoding="utf-8") as out_file:
+with open('./points_pca.tsv', 'w', newline='', encoding="utf-8") as out_file:
     tsv_writer = csv.writer(out_file, delimiter='\t')
     tsv_writer.writerow(['name', 'category', 'relevance', 'country_iso', 'x', 'y'])
     for i in range(0, len(d_pca)):
