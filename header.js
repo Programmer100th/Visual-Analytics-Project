@@ -10,7 +10,7 @@ import { myScatterplot }    from './scatterplot.js';
 function myHeader() {
 
 
-    d3.tsv("./data_files/geoviewsnew_2.tsv")
+    d3.tsv("./data_files/onlySitesWithWikipediaPage.tsv")
         .then(csvData => {
             const sitesPerCountryMap = d3.rollup(csvData, v => v.length, (d => d.country_iso));
 
@@ -48,7 +48,25 @@ function myHeader() {
 
             var categoriesMap = d3.rollup(csvData, v => v.length, d => d.category);
             var categoriesArray = Array.from(categoriesMap, ([category, sites_number]) => ([category, sites_number]));
-            var arrayOfCategories = categoriesArray.map(x => x[0]);
+            var arrayOfCategoriesWrong = categoriesArray.map(x => x[0]);
+
+
+
+            //Needed because when there are "" in the name of the site, it takes as category the longitude
+            var arrayOfCategories = []
+
+            arrayOfCategoriesWrong.forEach(function(element) {
+                if(element[0] >= 'A')
+                {
+                    console.log("ECCO")
+                    arrayOfCategories.push(element)
+                }
+
+            })
+
+            console.log(arrayOfCategories)
+                
+            
             createCategoryMenu(arrayOfCategories);
 
 
@@ -193,6 +211,8 @@ function myHeader() {
 
     function createCategoryMenu(array) {
 
+        console.log(array)
+
 
         var selectList = document.getElementById("categoryMenu")
 
@@ -212,6 +232,8 @@ function myHeader() {
             selectList[i].selected = true;
 
         }
+
+        
 
 
 

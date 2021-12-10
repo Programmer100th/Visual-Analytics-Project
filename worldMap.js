@@ -98,10 +98,11 @@ function createColorLegend(countries) {
         //colorScale.range(['#feedde','#fdbe85','#fd8d3c','#e6550d','#a63603'])
     }
 
+
     else if (maxValue >= 1000 && maxValue < 10000) {
         maxValue = 1000
         var colors = ['#feedde', '#fdbe85', '#fd8d3c', '#e6550d', '#a63603']
-        colorScale.domain([0, 50, 200, 500, maxValue])
+        colorScale.domain([0, 25, 50, 100, maxValue])
         colorScale.range([0].concat(colors));
         //colorScale.range(['#feedde','#fdbe85','#fd8d3c','#e6550d','#a63603'])
     }
@@ -231,7 +232,7 @@ function worldMapFirstTime() {
 
 
     Promise.all([
-        d3.tsv('./data_files/geoviewsnew_2.tsv'),
+        d3.tsv('./data_files/onlySitesWithWikipediaPage.tsv'),
         d3.json('./data_files/ne_50m_admin_0_countries.topojson')
 
     ]).then(([csvData, topoJSONData]) => {
@@ -331,7 +332,7 @@ function worldMap(selectedCategories, selectedRelevance) {
     var updatedCsvData = []
 
 
-    d3.tsv("./data_files/geoviewsnew_2.tsv")
+    d3.tsv("./data_files/onlySitesWithWikipediaPage.tsv")
         .then(csvData => {
 
 

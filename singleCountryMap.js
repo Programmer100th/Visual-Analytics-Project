@@ -251,7 +251,7 @@ function singleCountryMapFirstTime() {
 
 
 
-    d3.tsv("./data_files/geoviewsnew_2.tsv")
+    d3.tsv("./data_files/onlySitesWithWikipediaPage.tsv")
         .then(data => {
 
             var newData = []
@@ -300,7 +300,7 @@ function singleCountryMap(country_iso_code, selectedCategories, selectedRelevanc
 
     function filterData() {
 
-        d3.tsv("./data_files/geoviewsnew_2.tsv")
+        d3.tsv("./data_files/onlySitesWithWikipediaPage.tsv")
             .then(data => {
 
                 var newData = []
@@ -482,7 +482,7 @@ function putPointsOnMap(newData) {
         .attr('id', 'colorLegendBase')
 
     const colorLegendG = d3.select('#colorLegendBase').append('g')
-        .attr('transform', 'translate(' + window.innerWidth / 40 + ',' + window.innerHeight / 6 + ')')
+        .attr('transform', 'translate(' + window.innerWidth / 40 + ',' + window.innerHeight / 15 + ')')
         .attr('id', 'colorLegendSingleCountry');
 
 
